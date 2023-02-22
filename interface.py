@@ -1,73 +1,59 @@
 import questionary
-import requests
 import sys
+import controller
 
     
 def start_interface():
-    test = questionary.select(
+    question = questionary.select(
         "What do you want to do?",
         choices = [
-            "Make a team",
-            "See all Pokemon",
             "See one Pokemon",
-            "Learn more"
+            "See all Pokemon",  
+            "Make a team",        
+            "Learn more",
+            "Exit"
             ]
         ).ask()
     
-    if test == "Make a team":
-       make_team()
-    elif test == "See all Pokemon":
-       get_all_mons()
-    elif test == "See one Pokemon": 
+    if question == "See one Pokemon": 
         monname = input("Which pokemon do you want to see more about? ")
-        get_single_mon(monname)
-    elif test == "Learn more":
-        learn_more()
+        controller.get_single_mon(monname)
         
-        
-def make_team():
-    pass
+    elif question == "See all Pokemon":
+       controller.get_all_mons()
+       
+    elif question == "Make a team":
+        start_team() 
     
-
-def get_all_mons():
+    elif question == "Learn more":
+        controller.learn_more()
     
-    try:
-        response = requests.get("https://pokeapi.co/api/v2/pokemon?limit=151&offset=0")
-        response.raise_for_status()
-        
-    except requests.exceptions.HTTPError:
-        print("There was an error processing the request...")
-        print("Please check your spelling and try again.")
+    elif question == "Exit":
+        print("\n'Goodbye Butterfree, I'll always remember you...'")
         sys.exit(1)
         
-    data = response.json()
-    mon_id = 1
-    for item in data["results"]:
-        print(str(mon_id) + " - " + item["name"])
-        mon_id += 1
-    
-    start_interface()
-    
-    
-def get_single_mon(monname):    
-    try:
-        response = requests.get(f"https://pokeapi.co/api/v2/pokemon/{monname}/")
-        response.raise_for_status()
         
-    except requests.exceptions.HTTPError:
-        print("There was an error processing the request...")
-        print("Please check your spelling and try again.")
-        sys.exit(1)
-        
-    data = response.json()
+def start_team():
+    print("\nHere you can select 6 Pokemon to join you on your quest. Gotta catch 'em all!")
+    question = questionary.select(
+        "What do you want to do?",
+        choices = [
+            "Ready to add a Pokemon?",
+            "See a list of all Pokemon",  
+            "Check out a single Pokemon",        
+            "Go back"
+            ]
+        ).ask()
     
-    print("Name: " + data["name"])
-    print("ID: " + str(data["id"]))
-    print("Height: " + str(data["height"]))
-    print("Weight: " + str(data["weight"]))
-    for attr in data["types"]:
-        print("Type: " + attr["type"]["name"])
-        
-        
-def learn_more():
-    pass
+    if question == "Ready to add a Pokemon?":
+        ...
+    elif question == "See a list of all Pokemon":
+        controller.get_all_mons()
+        start_team()
+    elif question == "Check out a single Pokemon":
+        monname = input("Which pokemon do you want to see more about? ")
+        controller.get_single_mon(monname)
+        start_team()
+    elif question == "Go back":
+        start_interface()
+    
