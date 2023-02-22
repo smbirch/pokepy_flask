@@ -2,9 +2,10 @@ import interface
 
 
 # Working on now:
-# store monsters in db that have already been Get-ted
 # Allow users to select up to six mons.
 # Store chosen monsters somewhere
+# store monsters in db that have already been Get-ted
+# Store a person's particular team? For this I will need to get a username
 
 
 def main():

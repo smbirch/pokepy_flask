@@ -45,7 +45,7 @@ def start_team():
             ]
         ).ask()
     
-    if question == "Ready to add a Pokemon?":
+    if question == "Add a Pokemon to your team?":
         ...
     elif question == "See a list of all Pokemon":
         controller.get_all_mons()
