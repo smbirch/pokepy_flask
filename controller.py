@@ -4,6 +4,8 @@ import time
 import sys
 import random
 
+import database
+
 
 def get_all_mons():
     try:
@@ -23,33 +25,36 @@ def get_all_mons():
     print()
     interface.start_interface()    
     
-def get_single_mon(monname):    
-    try:
-        response = requests.get(f"https://pokeapi.co/api/v2/pokemon/{monname}/")
-        response.raise_for_status()
+def get_single_mon(monname): 
+    # todo: check if mon is in DB already
+    dbmon = database.get_mon(monname)
+    if dbmon == None:
+        try:
+            response = requests.get(f"https://pokeapi.co/api/v2/pokemon/{monname}/")
+            response.raise_for_status()
+            
+        except requests.exceptions.HTTPError:
+            print("There was an error processing the request...")
+            print("Please check your spelling and try again.\n")
+            time.sleep(2)
+            interface.start_interface()
         
-    except requests.exceptions.HTTPError:
-        print("There was an error processing the request...")
-        print("Please check your spelling and try again.\n")
-        time.sleep(2)
+        # extract data from json and store it in DB, then print for user  
+        data = response.json()
+        montype = []
+        for attr in data["types"]:
+            montype.append(attr["type"]["name"])
+        monobject = database.Pokemon(data["id"], data["name"], data["height"], data["weight"], montype)
+        print(monobject)
+        monobject.add_mon()
+        
         interface.start_interface()
         
-    data = response.json()
-    
-    print("\nName: " + data["name"])
-    print("ID: " + str(data["id"]))
-    print("Height: " + str(data["height"]))
-    print("Weight: " + str(data["weight"]))
-    for attr in data["types"]:
-        print("Type: " + attr["type"]["name"])
-    print()
-        
-    interface.start_interface()
+    else:
+        print(dbmon)
         
         
 def make_team():
-    #  wat
-    # I want to 
     pass        
         
 def learn_more():

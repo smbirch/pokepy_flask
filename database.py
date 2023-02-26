@@ -2,18 +2,73 @@ import sqlite3
 from sqlite3 import Error
 import os
 
-def init_db():
+# working on now:
+# creating DB class
+
+# class DB:
+#     def __init__(self, db_path):
+#         self.connection = sqlite3.connect(db_path)
+
+class User:
+    pass
+
+class Pokemon:
+    def __init__(self, id, name, height, weight, montype):
+        self.id = id
+        self.name = name
+        self.height = height
+        self.weight = weight
+        self.montype = montype
+        
+    def __str__(self):
+        return f"ID: {self.id}\nName: {self.name.capitalize()}\nHeight: {self.height}\nWeight: {self.weight}\nType: {' '.join(str(x).capitalize() for x in self.montype)}"
+    
+    # adds a single mon to database mons table
+    def add_mon(self):
+        try:
+            connection = sqlite3.connect("data/pokepy.db")
+            cursor = connection.cursor()
+    
+            insert_with_params = """INSERT INTO mons(
+                monid, name, height, weight, type)
+                VALUES(?, ?, ?, ?, ?);"""
+            
+            mondata_tuple = (self.id, self.name, self.height, self.weight, ' '.join(str(x).capitalize() for x in self.montype))
+
+            cursor.execute(insert_with_params, mondata_tuple)
+            connection.commit()
+            print("Mon inserted into DB")            
+
+        except Error as e:
+            print("Error while adding mon to DB")
+            print(e)
+            
+            
+        finally:
+            if connection:
+                connection.close()
+                
+    # This should return either the pokemon object or None 
+    def get_mon(self, monname):
+        pass
+        
+        
+        
+        
+def create_db():
     if not os.path.exists("data/pokepy.db"):
         try:
+            # DB.__init__("data/pokepy.db")
             connection = sqlite3.connect("data/pokepy.db")
             print("DB connected!")
             print(sqlite3.version)
             cursor = connection.cursor()
             
             # create users table
+            # userID here CANNOT be below 151
             try:
                 cursor.execute("""CREATE TABLE IF NOT EXISTS users(
-                    userid INTEGER PRIMARY KEY,
+                    userid INTEGER PRIMARY KEY, 
                     username TEXT,
                     date_created INTEGER,
                     has_team INTEGER);
@@ -31,8 +86,7 @@ def init_db():
                     name TEXT,
                     height INTEGER,
                     weight INTEGER,
-                    type1 TEXT,
-                    type2 TEXT)
+                    type TEXT);
                     """)
                 print("mons table created")
             except Error as e:
@@ -76,10 +130,6 @@ def init_db():
 def get_team():
     pass
 
-def add_mons():
-    pass
-# add mons to list 
-# one by one or as a batch? 
 
 
 # users table:

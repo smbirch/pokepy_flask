@@ -1,5 +1,7 @@
-import questionary
 import sys
+
+import questionary
+
 import controller
 
     
@@ -69,4 +71,3 @@ def user_team():
 # allow user to remove a mon
 # allow user to delete entire team
 
-# will need a model.py file to start working this out
