@@ -33,27 +33,40 @@ def start_interface():
         sys.exit(1)
         
         
+# start_team() is the interface portion of the team builder 
 def start_team():
     print("\nHere you can select 6 Pokemon to join you on your quest. Gotta catch 'em all!")
     question = questionary.select(
         "What do you want to do?",
         choices = [
-            "Ready to add a Pokemon?",
+            "See your team",
             "See a list of all Pokemon",  
             "Check out a single Pokemon",        
             "Go back"
             ]
         ).ask()
     
-    if question == "Add a Pokemon to your team?":
-        ...
+    if question == "See your team":
+        user_team()
+        
     elif question == "See a list of all Pokemon":
         controller.get_all_mons()
         start_team()
+        
     elif question == "Check out a single Pokemon":
         monname = input("Which pokemon do you want to see more about? ")
         controller.get_single_mon(monname)
         start_team()
+        
     elif question == "Go back":
         start_interface()
     
+    
+def user_team():
+    pass
+# show current mons in team by name and ID
+# allow user to add a new mon if they have less than 6
+# allow user to remove a mon
+# allow user to delete entire team
+
+# will need a model.py file to start working this out

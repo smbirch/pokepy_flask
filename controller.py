@@ -2,6 +2,7 @@ import requests
 import interface
 import time
 import sys
+import random
 
 
 def get_all_mons():
@@ -47,7 +48,8 @@ def get_single_mon(monname):
         
         
 def make_team():
-    
+    #  wat
+    # I want to 
     pass        
         
 def learn_more():
@@ -55,16 +57,15 @@ def learn_more():
     for item in text:
         print(item, end='')
         sys.stdout.flush()
-        time.sleep(0.05)
+        sleeptimer = random.uniform(0.05, 0.1)
+        time.sleep(sleeptimer)
     
     
-    # print("\nThis project utilizes the PokeApi, which can be found at https://pokeapi.co/")
-    # print("For more info about Pokemon, please visit https://www.serebii.net/")
     ellipsis = "..."
-    time.sleep(1)
+    time.sleep(.5)
     for item in ellipsis:
         print(item, end='')
         sys.stdout.flush()
-        time.sleep(1)
+        time.sleep(.3)
     print()
     interface.start_interface()
