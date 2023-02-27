@@ -27,7 +27,7 @@ def get_all_mons():
     
 def get_single_mon(monname): 
     # todo: check if mon is in DB already
-    dbmon = database.get_mon(monname)
+    dbmon = database.Pokemon.get_mon(monname)
     if dbmon == None:
         try:
             response = requests.get(f"https://pokeapi.co/api/v2/pokemon/{monname}/")

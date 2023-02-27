@@ -28,7 +28,8 @@ class Pokemon:
         try:
             connection = sqlite3.connect("data/pokepy.db")
             cursor = connection.cursor()
-    
+            # This section belpw can probably be done more smoothly
+            # Do I really need to convert the whole object to tuple each time?
             insert_with_params = """INSERT INTO mons(
                 monid, name, height, weight, type)
                 VALUES(?, ?, ?, ?, ?);"""
@@ -49,8 +50,28 @@ class Pokemon:
                 connection.close()
                 
     # This should return either the pokemon object or None 
-    def get_mon(self, monname):
-        pass
+    @staticmethod
+    def get_mon(monname):
+        try:
+            query = "SELECT * FROM mons where name = ?;"
+            connection = sqlite3.connect("data/pokepy.db")
+            cursor = connection.cursor()
+            cursor.execute(query, (monname,))
+            for row in cursor:
+                monobject = Pokemon(*row)
+            return monobject
+            
+            
+        except Error as e:
+            print("Error getting mon from DB")
+            print("database.67")
+            print(e)
+        
+            
+        finally:
+            if connection:
+                connection.close()
+            
         
         
         
@@ -58,14 +79,13 @@ class Pokemon:
 def create_db():
     if not os.path.exists("data/pokepy.db"):
         try:
-            # DB.__init__("data/pokepy.db")
             connection = sqlite3.connect("data/pokepy.db")
             print("DB connected!")
             print(sqlite3.version)
             cursor = connection.cursor()
             
             # create users table
-            # userID here CANNOT be below 151
+            # userID should be 5 digits
             try:
                 cursor.execute("""CREATE TABLE IF NOT EXISTS users(
                     userid INTEGER PRIMARY KEY, 
