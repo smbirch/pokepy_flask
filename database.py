@@ -21,14 +21,15 @@ class Pokemon:
         self.montype = montype
         
     def __str__(self):
-        return f"ID: {self.id}\nName: {self.name.capitalize()}\nHeight: {self.height}\nWeight: {self.weight}\nType: {' '.join(str(x).capitalize() for x in self.montype)}"
+        # print(self.montype)
+        return f"ID: {self.id}\nName: {self.name.capitalize()}\nHeight: {self.height}\nWeight: {self.weight}\nType: {(self.montype)}"
     
     # adds a single mon to database mons table
-    def add_mon(self):
+    def add_mon_todb(self):
         try:
             connection = sqlite3.connect("data/pokepy.db")
             cursor = connection.cursor()
-            # This section belpw can probably be done more smoothly
+            # This section below can probably be done more smoothly
             # Do I really need to convert the whole object to tuple each time?
             insert_with_params = """INSERT INTO mons(
                 monid, name, height, weight, type)
@@ -44,7 +45,6 @@ class Pokemon:
             print("Error while adding mon to DB")
             print(e)
             
-            
         finally:
             if connection:
                 connection.close()
@@ -52,30 +52,34 @@ class Pokemon:
     # This should return either the pokemon object or None 
     @staticmethod
     def get_mon(monname):
+        # see if this mon exists in DBs
         try:
-            query = "SELECT * FROM mons where name = ?;"
+            query = "SELECT EXISTS(SELECT 1 from mons where name = ?);"
             connection = sqlite3.connect("data/pokepy.db")
             cursor = connection.cursor()
             cursor.execute(query, (monname,))
-            for row in cursor:
-                monobject = Pokemon(*row)
-            return monobject
-            
-            
+           
+            # if row exists in DB
+            if cursor.fetchone():
+                query = "SELECT * FROM mons where name = ?;"
+                cursor.execute(query, (monname,))
+                
+                for row in cursor:
+                    monobject = Pokemon(*row)
+                    print("from DB: ")
+                    return monobject
+            else:
+                return None
+
         except Error as e:
             print("Error getting mon from DB")
-            print("database.67")
             print(e)
-        
-            
+
         finally:
             if connection:
                 connection.close()
             
-        
-        
-        
-        
+            
 def create_db():
     if not os.path.exists("data/pokepy.db"):
         try:
@@ -144,9 +148,7 @@ def create_db():
             if connection:
                 connection.close()
         
-        
 
-    
 def get_team():
     pass
 

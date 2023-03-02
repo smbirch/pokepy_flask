@@ -28,7 +28,8 @@ def get_all_mons():
 def get_single_mon(monname): 
     # todo: check if mon is in DB already
     dbmon = database.Pokemon.get_mon(monname)
-    if dbmon == None:
+    if not dbmon:
+        print("trying request")
         try:
             response = requests.get(f"https://pokeapi.co/api/v2/pokemon/{monname}/")
             response.raise_for_status()
@@ -46,7 +47,7 @@ def get_single_mon(monname):
             montype.append(attr["type"]["name"])
         monobject = database.Pokemon(data["id"], data["name"], data["height"], data["weight"], montype)
         print(monobject)
-        monobject.add_mon()
+        monobject.add_mon_todb()
         
         interface.start_interface()
         
