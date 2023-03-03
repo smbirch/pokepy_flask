@@ -9,6 +9,7 @@ import os
 #     def __init__(self, db_path):
 #         self.connection = sqlite3.connect(db_path)
 
+
 class User:
     pass
 
@@ -20,22 +21,21 @@ class Pokemon:
         self.weight = weight
         self.montype = montype
         
+        # todo fix type insertion into DB
     def __str__(self):
         # print(self.montype)
-        return f"ID: {self.id}\nName: {self.name.capitalize()}\nHeight: {self.height}\nWeight: {self.weight}\nType: {(self.montype)}"
+        return f"ID: {self.id}\nName: {self.name.capitalize()}\nHeight: {self.height}\nWeight: {self.weight}\nType: {self.montype}"
     
     # adds a single mon to database mons table
     def add_mon_todb(self):
         try:
             connection = sqlite3.connect("data/pokepy.db")
             cursor = connection.cursor()
-            # This section below can probably be done more smoothly
-            # Do I really need to convert the whole object to tuple each time?
             insert_with_params = """INSERT INTO mons(
                 monid, name, height, weight, type)
                 VALUES(?, ?, ?, ?, ?);"""
             
-            mondata_tuple = (self.id, self.name, self.height, self.weight, ' '.join(str(x).capitalize() for x in self.montype))
+            mondata_tuple = (self.id, self.name, self.height, self.weight, self.montype)
 
             cursor.execute(insert_with_params, mondata_tuple)
             connection.commit()
@@ -106,7 +106,7 @@ def create_db():
             # cache data about monsters that have previously been called upon: 
             try:
                 cursor.execute("""CREATE TABLE IF NOT EXISTS mons(
-                    monid INTEGER PRIMARY KEY,
+                    monid INTEGER PRIMARY KEY NOT NULL,
                     name TEXT,
                     height INTEGER,
                     weight INTEGER,

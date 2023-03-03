@@ -25,6 +25,7 @@ def get_all_mons():
     print()
     interface.start_interface()    
     
+    
 def get_single_mon(monname): 
     # todo: check if mon is in DB already
     dbmon = database.Pokemon.get_mon(monname)
@@ -37,18 +38,17 @@ def get_single_mon(monname):
         except requests.exceptions.HTTPError:
             print("There was an error processing the request...")
             print("Please check your spelling and try again.\n")
-            time.sleep(2)
+            time.sleep(1)
             interface.start_interface()
         
         # extract data from json and store it in DB, then print for user  
         data = response.json()
-        montype = []
+        montype = ""
         for attr in data["types"]:
-            montype.append(attr["type"]["name"])
-        monobject = database.Pokemon(data["id"], data["name"], data["height"], data["weight"], montype)
+            montype += attr["type"]["name"] + " "
+        monobject = database.Pokemon(data["id"], data["name"], data["height"], data["weight"], montype.title())
         print(monobject)
         monobject.add_mon_todb()
-        
         interface.start_interface()
         
     else:
@@ -63,7 +63,7 @@ def learn_more():
     for item in text:
         print(item, end='')
         sys.stdout.flush()
-        sleeptimer = random.uniform(0.05, 0.1)
+        sleeptimer = random.uniform(0.045, 0.1)
         time.sleep(sleeptimer)
     
     
