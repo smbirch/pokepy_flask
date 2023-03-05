@@ -54,24 +54,36 @@ def get_single_mon(monname):
     else:
         print(dbmon)
         
-        
+
+def get_team(username):
+    userobject = database.User.get_team(username)
+    if not userobject:
+            print("User not found")
+            return
+            # make them create a user or go back
+    else:
+        team = database.get_team(userobject.id)
+        return team
+
+
+
 def make_team():
     pass        
         
 def learn_more():
-    text = "This project utilizes the PokeApi, which can be found at https://pokeapi.co/\nFor more info about Pokemon, please visit https://www.serebii.net/\n"
+    text = "This project utilizes the PokeApi, which can be found at https://pokeapi.co/\nFor more information about Pokemon, please visit https://www.serebii.net/\n"
     for item in text:
         print(item, end='')
         sys.stdout.flush()
-        sleeptimer = random.uniform(0.045, 0.1)
+        sleeptimer = random.uniform(0.03, 0.099)
         time.sleep(sleeptimer)
     
     
     ellipsis = "..."
     time.sleep(.5)
     for item in ellipsis:
-        print(item, end='')
+        print(item, end=' ')
         sys.stdout.flush()
-        time.sleep(.3)
+        time.sleep(.4)
     print()
     interface.start_interface()

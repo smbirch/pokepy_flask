@@ -3,6 +3,7 @@ import sys
 import questionary
 
 import controller
+import database
 
     
 def start_interface():
@@ -42,8 +43,11 @@ def start_team():
         "What do you want to do?",
         choices = [
             "See your team",
+            "Add a pokemon to your team",
+            "Remove a pokemon from your team",
+            "Delete your team",
             "See a list of all Pokemon",  
-            "Check out a single Pokemon",        
+            "See a single Pokemon",        
             "Go back"
             ]
         ).ask()
@@ -51,21 +55,45 @@ def start_team():
     if question == "See your team":
         user_team()
         
+    elif question == "Add a pokemon to your team":
+        pass
+        
     elif question == "See a list of all Pokemon":
         controller.get_all_mons()
-        start_team()
+        # start_team()
         
-    elif question == "Check out a single Pokemon":
+    elif question == "See a single Pokemon":
         monname = input("Which pokemon do you want to see more about? ")
         controller.get_single_mon(monname)
-        start_team()
+        # start_team()
         
     elif question == "Go back":
         start_interface()
     
     
 def user_team():
-    pass
+    # database.User.check_user()
+    hasusername = questionary.select(
+    "Do you have an account already?",
+    choices = [
+        "Yes", 
+        "No",
+        "Go back"
+        ]
+    ).ask()
+    
+    if hasusername == "Yes":
+        username = input("Enter your username: ")
+        team = controller.get_team(username)
+        print(team)
+        
+
+    elif hasusername == "No":
+        username = input("Enter your username: ")
+        database.User.create_user(username)
+    
+    elif hasusername == "Go back":
+        start_interface()
 # show current mons in team by name and ID
 # allow user to add a new mon if they have less than 6
 # allow user to remove a mon

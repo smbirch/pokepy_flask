@@ -1,6 +1,8 @@
 import sqlite3
 from sqlite3 import Error
 import os
+import datetime
+import uuid
 
 database_file = "data/pokepy.db"
 
@@ -43,8 +45,42 @@ class DBConnection:
         
 
 class User:
-    pass
+    def __init__(self, userid, name, date_created, has_team):
+        self.userid = userid
+        self.name = name
+        self.date_created = date_created
+        self.has_team = has_team
+    
+    @staticmethod    
+    def get_user(username):
+        print(f"check user! - {username}")
+        with DBConnection() as db:
+            query = "SELECT * FROM users WHERE username = ?"
+            db.execute(query, username)
+            if db.cursor == None:
+                return None
+            else:
+                for row in db.cursor:
+                    userobject = User(*row)
+                    return userobject
+                
+    @staticmethod
+    def create_user(username):
+        
+        with DBConnection() as db:
+            userid = str(uuid.uuid4())
+            now = datetime.datetime.now()
+            date_created = f"{now.date()} {now.time()}"
+        
+            create_user_sql = """INSERT INTO users(
+                userid, name, date_created, has_team)
+                VALUES(?, ?, ?, ?);"""
+            userdata = (userid, username, date_created, "FALSE")
+            db.execute_query(create_user_sql, *userdata)
+        # Now we will create an empty team for this user at the same time using their uuid to link them
+        Team.create_team(userid)
 
+                       
 
 class Pokemon:
     def __init__(self, id, name, height, weight, montype):
@@ -81,18 +117,34 @@ class Pokemon:
                     monobject = Pokemon(*row)
                     # print("from DB: ")
                     return monobject
+
     
-         
+class Team():
+    def __init__(self, userid, mon1, mon2, mon3, mon4, mon5, mon6):
+        pass
+    
+    def get_team(userid):
+        # get team by searching for userID
+        pass
+    
+    
+    @staticmethod
+    def create_team(owner_id):
+        with DBConnection() as db:
+            create_team_sql = """INSERT INTO teams(
+                owner_id) VALUES(?);"""
+            db.execute_query(create_team_sql, owner_id)
+
+       
 def create_db():
     if os.path.exists("data/pokepy.db"):
         return
     
     # create users table
-    # userID should be 5 digits
     with DBConnection() as db:
         users_table = """CREATE TABLE IF NOT EXISTS users(
-            userid INTEGER PRIMARY KEY, 
-            username TEXT,
+            userid TEXT PRIMARY KEY, 
+            name TEXT UNIQUE,
             date_created INTEGER,
             has_team INTEGER);
             """
@@ -114,7 +166,7 @@ def create_db():
         # create teams table
         # links user ID and monster IDs
         teams_table = """CREATE TABLE IF NOT EXISTS teams(
-            userid INTEGER PRIMARY KEY,
+            owner_id TEXT PRIMARY KEY,
             mon1 INTEGER,
             mon2 INTEGER,
             mon3 INTEGER,
