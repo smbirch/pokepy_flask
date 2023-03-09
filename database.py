@@ -45,9 +45,9 @@ class DBConnection:
         
 
 class User:
-    def __init__(self, userid, name, date_created, has_team):
+    def __init__(self, userid, username, date_created, has_team):
         self.userid = userid
-        self.name = name
+        self.username = username
         self.date_created = date_created
         self.has_team = has_team
     
@@ -56,7 +56,7 @@ class User:
         print(f"check user! - {username}")
         with DBConnection() as db:
             query = "SELECT * FROM users WHERE username = ?"
-            db.execute(query, username)
+            db.execute_query(query, username)
             if db.cursor == None:
                 return None
             else:
@@ -73,12 +73,15 @@ class User:
             date_created = f"{now.date()} {now.time()}"
         
             create_user_sql = """INSERT INTO users(
-                userid, name, date_created, has_team)
+                userid, username, date_created, has_team)
                 VALUES(?, ?, ?, ?);"""
             userdata = (userid, username, date_created, "FALSE")
             db.execute_query(create_user_sql, *userdata)
+            userobject = User(userid, username, date_created, "FALSE")
         # Now we will create an empty team for this user at the same time using their uuid to link them
-        Team.create_team(userid)
+        # print("user inserted into DB")
+        return userobject
+        
 
                        
 
@@ -121,21 +124,43 @@ class Pokemon:
     
 class Team():
     def __init__(self, userid, mon1, mon2, mon3, mon4, mon5, mon6):
-        pass
+        self.ownerid = userid
+        self.mon1 = mon1
+        self.mon2 = mon2
+        self.mon3 = mon3
+        self.mon4 = mon4
+        self.mon5 = mon5
+        self.mon6 = mon6 
     
-    def get_team(userid):
+    def __str__(self):
+        print("team id:")
+        print(self.ownerid)
+    
+    def get_team(owner_id):
         # get team by searching for userID
-        pass
-    
-    
+        with DBConnection() as db:
+            db.execute_query("SELECT * FROM teams WHERE owner_id = ?", owner_id)
+            for row in db.cursor:
+                teamobject = Team(*row)
+                return teamobject  
+        
     @staticmethod
     def create_team(owner_id):
+        print("creating team")
         with DBConnection() as db:
             create_team_sql = """INSERT INTO teams(
-                owner_id) VALUES(?);"""
-            db.execute_query(create_team_sql, owner_id)
+                owner_id, mon1, mon2, mon3,
+                mon4, mon5, mon6)
+                VALUES(?, ?, ?, ?, ?, ?, ?);"""
+            params = (owner_id, "None", "None", "None", "None", "None", "None")
+            db.execute_query(create_team_sql, *params)
+            print("team created")
+            db.execute_query("SELECT * FROM teams WHERE owner_id = ?", owner_id)
+            for row in db.cursor:
+                teamobject = Team(*row)
+                return teamobject            
+            
 
-       
 def create_db():
     if os.path.exists("data/pokepy.db"):
         return
@@ -144,7 +169,7 @@ def create_db():
     with DBConnection() as db:
         users_table = """CREATE TABLE IF NOT EXISTS users(
             userid TEXT PRIMARY KEY, 
-            name TEXT UNIQUE,
+            username TEXT UNIQUE,
             date_created INTEGER,
             has_team INTEGER);
             """
@@ -176,7 +201,3 @@ def create_db():
             """
         db.execute_query(teams_table)
         print("teams table created")
-        
-
-def get_team():
-    pass

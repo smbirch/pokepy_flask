@@ -68,7 +68,27 @@ def get_team(username):
 
 
 def make_team():
-    pass        
+    pass     
+
+
+def get_user(username):
+    user = database.User.get_user(username)
+    if not user:
+        print("User not found!")
+        interface.start_team()
+    print(user.userid)
+    
+def create_user(username):
+    userobject = database.User.get_user(username)
+    if userobject:
+        print("There is already a user with that username!")
+        interface.start_team()
+    userobject = database.User.create_user(username)
+    teamobject = database.Team.create_team(userobject.userid)
+    print(userobject.userid)
+    print(teamobject.ownerid)
+    
+      
         
 def learn_more():
     text = "This project utilizes the PokeApi, which can be found at https://pokeapi.co/\nFor more information about Pokemon, please visit https://www.serebii.net/\n"
