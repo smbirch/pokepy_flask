@@ -3,6 +3,7 @@ import interface
 import time
 import sys
 import random
+import os
 
 import database
 
@@ -15,7 +16,7 @@ def get_all_mons():
     except requests.exceptions.HTTPError:
         print("There was an error processing the request...\n")
         time.sleep(2)
-        interface.start_interface()
+        restart_program()
         
     data = response.json()
     mon_id = 1
@@ -23,14 +24,18 @@ def get_all_mons():
         print(str(mon_id) + " - " + item["name"])
         mon_id += 1
     print()
-    interface.start_interface()    
+    restart_program()
     
     
-def get_single_mon(monname): 
-    # todo: check if mon is in DB already
+    
+def get_single_mon(monname):
+    if monname == "" or monname == " ":
+        print("Please check your spelling and try again.\n")
+        restart_program()
+
+        
     dbmon = database.Pokemon.get_mon(monname)
     if not dbmon:
-        # print("trying request")
         try:
             response = requests.get(f"https://pokeapi.co/api/v2/pokemon/{monname}/")
             response.raise_for_status()
@@ -39,7 +44,7 @@ def get_single_mon(monname):
             print("There was an error processing the request...")
             print("Please check your spelling and try again.\n")
             time.sleep(1)
-            interface.start_interface()
+            restart_program()
         
         # extract data from json and store it in DB, then print for user  
         data = response.json()
@@ -49,23 +54,19 @@ def get_single_mon(monname):
         monobject = database.Pokemon(data["id"], data["name"], data["height"], data["weight"], montype)
         print(monobject)
         monobject.add_mon_todb()
-        interface.start_interface()
+        restart_program()
         
     else:
         print(dbmon)
+        restart_program()
+        
         
 
-def get_team(username):
-    userobject = database.User.get_team(username)
-    if not userobject:
-            print("User not found")
-            return
-            # make them create a user or go back
-    else:
-        team = database.get_team(userobject.id)
-        return team
-
-
+def get_team(userobject):
+    teamobject = database.Team.get_team(userobject.userid)
+    # print(teamobject)
+    return teamobject
+    
 
 def make_team():
     pass     
@@ -77,6 +78,7 @@ def get_user(username):
         print("User not found!")
         interface.start_team()
     print(user.userid)
+    return user
     
 def create_user(username):
     userobject = database.User.get_user(username)
@@ -84,12 +86,9 @@ def create_user(username):
         print("There is already a user with that username!")
         interface.start_team()
     userobject = database.User.create_user(username)
-    teamobject = database.Team.create_team(userobject.userid)
-    print(userobject.userid)
-    print(teamobject.ownerid)
+    database.Team.create_team(userobject.userid)
     
-      
-        
+# This function literally just prints the text to stdout, but with a randomized delay so it *kinda* scrolls like in a game
 def learn_more():
     text = "This project utilizes the PokeApi, which can be found at https://pokeapi.co/\nFor more information about Pokemon, please visit https://www.serebii.net/\n"
     for item in text:
@@ -97,8 +96,7 @@ def learn_more():
         sys.stdout.flush()
         sleeptimer = random.uniform(0.03, 0.099)
         time.sleep(sleeptimer)
-    
-    
+
     ellipsis = "..."
     time.sleep(.5)
     for item in ellipsis:
@@ -106,4 +104,8 @@ def learn_more():
         sys.stdout.flush()
         time.sleep(.4)
     print()
-    interface.start_interface()
+    restart_program()
+
+
+def restart_program():
+    os.execv(sys.executable, ['python'] + sys.argv)

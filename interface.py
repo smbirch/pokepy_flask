@@ -50,76 +50,56 @@ def start_team():
     # Do I need to move this out into the controller module? 
     if hasusername == "Yes":
         username = input("Enter your username: ")
-        controller.get_user(username)
-        
-
+        userobject = controller.get_user(username)
+        build_team(userobject)
+    
     elif hasusername == "No":
         print("let's create a new user...")
         username = input("Enter your username: ")
-        controller.create_user(username)
+        userobject = controller.create_user(username)
+        build_team(userobject)
         
     elif hasusername == "Go back":
-        start_interface()
+        controller.restart_program()
+        
+    else:
+        controller.restart_program()
 
-def build_team():
-    pass
+def build_team(userobject):
+    teamobject = controller.get_team(userobject)
+    question = questionary.select(
+        "What do you want to do?",
+        choices = [
+            "See your team",
+            "Add a pokemon to your team",
+            "Remove a pokemon from your team",
+            "Delete your team",
+            "See a list of all Pokemon",  
+            "See a single Pokemon",        
+            "Go back"
+            ]
+        ).ask()
     
+    if question == "See your team":
+        print(f"{userobject.username.capitalize()}'s team:\n{teamobject}")
+        pass
         
-    # question = questionary.select(
-    #     "What do you want to do?",
-    #     choices = [
-    #         "See your team",
-    #         "Add a pokemon to your team",
-    #         "Remove a pokemon from your team",
-    #         "Delete your team",
-    #         "See a list of all Pokemon",  
-    #         "See a single Pokemon",        
-    #         "Go back"
-    #         ]
-    #     ).ask()
+    elif question == "Add a pokemon to your team":
+        pass
+        
+    elif question == "See a list of all Pokemon":
+        controller.get_all_mons()
+        # start_team()
+        
+    elif question == "See a single Pokemon":
+        monname = input("Which pokemon do you want to see more about? ")
+        controller.get_single_mon(monname)
+        # start_team()
+        
+    elif question == "Go back":
+        controller.restart_program()
     
-    # if question == "See your team":
-    #     user_team()
-        
-    # elif question == "Add a pokemon to your team":
-    #     pass
-        
-    # elif question == "See a list of all Pokemon":
-    #     controller.get_all_mons()
-    #     # start_team()
-        
-    # elif question == "See a single Pokemon":
-    #     monname = input("Which pokemon do you want to see more about? ")
-    #     controller.get_single_mon(monname)
-    #     # start_team()
-        
-    # elif question == "Go back":
-    #     start_interface()
-    
-    
-def user_team():
-    # database.User.check_user()
-    hasusername = questionary.select(
-    "Do you have an account already?",
-    choices = [
-        "Yes", 
-        "No",
-        "Go back"
-        ]
-    ).ask()
-    
-    if hasusername == "Yes":
-        username = input("Enter your username: ")
-        team = controller.get_team(username)
-        print(team)
-        
 
-    elif hasusername == "No":
-        username = input("Enter your username: ")
-        database.User.create_user(username)
-    
-    elif hasusername == "Go back":
-        start_interface()
 # show current mons in team by name and ID
 # allow user to add a new mon if they have less than 6
 # allow user to remove a mon
