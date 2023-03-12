@@ -67,6 +67,21 @@ class User:
                     userobject = User(*row)
                     return userobject
                 
+                
+    @staticmethod
+    def get_all_users():
+        users = []
+        with DBConnection() as db:
+            query = "SELECT * FROM users"
+            db.execute_query(query)
+            if db.cursor == None:
+                return None
+            else:
+                for row in db.cursor:
+                    users.append(row[1])
+                return users
+        
+                
     @staticmethod
     def create_user(username):
         with DBConnection() as db:
@@ -82,7 +97,6 @@ class User:
             userobject = User(userid, username, date_created, "FALSE")
         # Now we will create an empty team for this user at the same time using their uuid to link them
         # print("user inserted into DB")
-        
         return userobject
         
 
@@ -137,6 +151,7 @@ class Team():
     def __str__(self):
         return f"1: {self.mon1}\n2: {self.mon2}\n3: {self.mon3}\n4: {self.mon4}\n5: {self.mon5}\n6: {self.mon6}"
     
+    @staticmethod
     def get_team(teamid):
         # get team by searching for userID
         with DBConnection() as db:
@@ -147,7 +162,7 @@ class Team():
                 for row in db.cursor:
                     teamobject = Team(*row)
                     return teamobject  
-        
+                
     @staticmethod
     def create_team(teamid):
         # Creates and empty team, usually at the time of user creation
@@ -163,8 +178,24 @@ class Team():
             db.execute_query("SELECT * FROM teams WHERE teamid = ?", teamid)
             for row in db.cursor:
                 teamobject = Team(*row)
-                return teamobject            
+                return teamobject    
             
+    def delete_team(self):
+        with DBConnection() as db:
+            db.execute_query("DELETE FROM teams WHERE teamid = ?", self.teamid)
+            
+        newteam = Team.create_team(self.teamid)
+        return newteam
+            
+    def team_size(self):
+        size = 0
+        mons = [self.mon1, self.mon2, self.mon3, self.mon4, self.mon5, self.mon6]
+        for mon in mons:
+            if mon != "None":
+                size += 1
+            
+        return size
+        
 
 def create_db():
     if os.path.exists("data/pokepy.db"):

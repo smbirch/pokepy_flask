@@ -15,7 +15,14 @@ def get_all_mons():
         
     except requests.exceptions.HTTPError:
         print("There was an error processing the request...\n")
-        time.sleep(2)
+        print("restarting")
+        ellipsis = "..."
+        time.sleep(.5)
+        for item in ellipsis:
+            print(item, end=' ')
+            sys.stdout.flush()
+            time.sleep(.4)
+        print()
         restart_program()
         
     data = response.json()
@@ -23,15 +30,15 @@ def get_all_mons():
     for item in data["results"]:
         print(str(mon_id) + " - " + item["name"])
         mon_id += 1
-    print()
-    restart_program()
+    print("\n")
+    return
     
     
     
 def get_single_mon(monname):
     if monname == "" or monname == " ":
         print("Please check your spelling and try again.\n")
-        restart_program()
+        return
 
         
     dbmon = database.Pokemon.get_mon(monname)
@@ -52,13 +59,10 @@ def get_single_mon(monname):
         for attr in data["types"]:
             montype += attr["type"]["name"] + " "
         monobject = database.Pokemon(data["id"], data["name"], data["height"], data["weight"], montype)
-        print(monobject)
         monobject.add_mon_todb()
-        restart_program()
-        
+        return monobject
     else:
-        print(dbmon)
-        restart_program()
+        return dbmon
         
         
 
@@ -66,7 +70,7 @@ def get_team(userobject):
     teamobject = database.Team.get_team(userobject.userid)
     # print(teamobject)
     return teamobject
-    
+
 
 def make_team():
     pass     
@@ -76,7 +80,7 @@ def get_user(username):
     user = database.User.get_user(username)
     if not user:
         print("User not found!")
-        interface.start_team()
+        restart_program()
     print(user.userid)
     return user
     
@@ -87,6 +91,7 @@ def create_user(username):
         interface.start_team()
     userobject = database.User.create_user(username)
     database.Team.create_team(userobject.userid)
+    return userobject
     
 # This function literally just prints the text to stdout, but with a randomized delay so it *kinda* scrolls like in a game
 def learn_more():
@@ -104,7 +109,7 @@ def learn_more():
         sys.stdout.flush()
         time.sleep(.4)
     print()
-    restart_program()
+    
 
 
 def restart_program():
