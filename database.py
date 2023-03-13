@@ -55,7 +55,6 @@ class User:
 
     @staticmethod
     def get_user(username):
-        print(f"check user! - {username}")
         with DBConnection() as db:
             query = "SELECT * FROM users WHERE username = ?"
             db.execute_query(query, username)
@@ -92,8 +91,6 @@ class User:
             userdata = (userid, username, date_created)
             db.execute_query(create_user_sql, *userdata)
             userobject = User(userid, username, date_created)
-        # Now we will create an empty team for this user at the same time using their uuid to link them
-        # print("user inserted into DB")
         return userobject
 
 
@@ -153,11 +150,15 @@ class Team:
         return f"1: {self.mon1}\n2: {self.mon2}\n3: {self.mon3}\n4: {self.mon4}\n5: {self.mon5}\n6: {self.mon6}"
 
     def delete_team(self):
+        print("Deleting team!")
         with DBConnection() as db:
             db.execute_query("DELETE FROM teams WHERE teamid=?", self.teamid)
 
         newteam = Team.create_team(self.teamid)
         return newteam
+
+    # def getmonfromteam(self, monname):
+    #     return getattr(self, monname)
 
     def team_size(self):
         size = 0
@@ -178,6 +179,14 @@ class Team:
             )
             db.execute_query(query)
 
+    def remove_mon_from_team(self, montoremove_pos):
+        column_pos = f"mon{montoremove_pos}"
+        with DBConnection() as db:
+            query = "UPDATE teams set {0}='None' WHERE teamid='{1}'".format(
+                column_pos, self.teamid
+            )
+            db.execute_query(query)
+
     @staticmethod
     def get_team(teamid):
         # get team by searching for userID
@@ -193,7 +202,6 @@ class Team:
     @staticmethod
     def create_team(teamid):
         # Creates and empty team, usually at the time of user creation
-        print("creating team")
         with DBConnection() as db:
             create_team_sql = """INSERT INTO teams(
                 teamid, mon1, mon2, mon3,
@@ -201,7 +209,6 @@ class Team:
                 VALUES(?, ?, ?, ?, ?, ?, ?);"""
             params = (teamid, "None", "None", "None", "None", "None", "None")
             db.execute_query(create_team_sql, *params)
-            print("team created")
             db.execute_query("SELECT * FROM teams WHERE teamid = ?", teamid)
             for row in db.cursor:
                 teamobject = Team(*row)

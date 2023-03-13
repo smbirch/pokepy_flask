@@ -10,7 +10,6 @@ def setup_user():
     print(
         "\nWelcome to Pokepy! First, you will need to register or load your account.\n"
     )
-    # Maybe show a list of accounts present on machine here?
     userslist = database.User.get_all_users()
     print(f"Accounts present:\n{userslist}\n")
     hasusername = questionary.select(
@@ -28,6 +27,7 @@ def setup_user():
         start_interface(userobject)
 
     elif hasusername == "Quit":
+        print("Goodbye")
         sys.exit(0)
 
     else:
@@ -71,6 +71,7 @@ def start_interface(userobject):
 def build_team(userobject):
     teamobject = controller.get_team(userobject)
     teamsize = database.Team.team_size(teamobject)
+    print(f"\n{userobject.username.capitalize()}'s team:\n{teamobject}")
 
     if teamsize == 6:
         print("\nYour team is full!")
@@ -83,7 +84,7 @@ def build_team(userobject):
         choices=[
             "See your team",
             "Add a Pokemon to your team",
-            "Remove a pokemon from your team",
+            "Remove a Pokemon from your team",
             "Delete your team",
             "See a list of all Pokemon",
             "See a single Pokemon",
@@ -92,7 +93,7 @@ def build_team(userobject):
     ).ask()
 
     if question == "See your team":
-        print(f"{userobject.username.capitalize()}'s team:\n{teamobject}")
+        print(f"\n{userobject.username.capitalize()}'s team:\n{teamobject}")
         build_team(userobject)
 
     elif question == "Add a Pokemon to your team":
@@ -102,7 +103,7 @@ def build_team(userobject):
         build_team(userobject)
 
     elif question == "Remove a Pokemon from your team":
-        pass
+        remove_mon_from_team(userobject, teamobject)
 
     elif question == "Delete your team":
         database.Team.delete_team(teamobject)
@@ -122,10 +123,24 @@ def build_team(userobject):
 
 
 def remove_mon_from_team(userobject, teamobject):
-    pass
+    print(f"\n{userobject.username.capitalize()}'s current team:\n{teamobject}")
+    print("\n***")
+    choices = []
+    teamsize = database.Team.team_size(teamobject)
+    if teamsize == 0:
+        print("\nYou have no mons to remove!\n")
+        build_team(userobject)
+    else:
+        for i in range(teamsize):
+            choices.append(getattr(teamobject, f"mon{i + 1}"))  # TODO: fix this
 
+        question = questionary.checkbox(
+            "Select mon(s) to remove:",
+            choices,
+        ).ask()
 
-# show current mons in team by name and ID
-# allow user to add a new mon if they have less than 6
-# allow user to remove a mon
-# allow user to delete entire team
+        for position, montoremove in enumerate(choices):
+            if montoremove in question:
+                position += 1
+                database.Team.remove_mon_from_team(teamobject, position)
+        build_team(userobject)
