@@ -12,19 +12,19 @@ def get_all_mons():
     try:
         response = requests.get("https://pokeapi.co/api/v2/pokemon?limit=151&offset=0")
         response.raise_for_status()
-        
+
     except requests.exceptions.HTTPError:
         print("There was an error processing the request...\n")
         print("restarting")
         ellipsis = "..."
-        time.sleep(.5)
+        time.sleep(0.5)
         for item in ellipsis:
-            print(item, end=' ')
+            print(item, end=" ")
             sys.stdout.flush()
-            time.sleep(.4)
+            time.sleep(0.4)
         print()
         restart_program()
-        
+
     data = response.json()
     mon_id = 1
     for item in data["results"]:
@@ -32,39 +32,38 @@ def get_all_mons():
         mon_id += 1
     print("\n")
     return
-    
-    
-    
+
+
 def get_single_mon(monname):
     if monname == "" or monname == " ":
         print("Please check your spelling and try again.\n")
         return
 
-        
     dbmon = database.Pokemon.get_mon(monname)
     if not dbmon:
         try:
             response = requests.get(f"https://pokeapi.co/api/v2/pokemon/{monname}/")
             response.raise_for_status()
-            
+
         except requests.exceptions.HTTPError:
             print("There was an error processing the request...")
             print("Please check your spelling and try again.\n")
             time.sleep(1)
             restart_program()
-        
-        # extract data from json and store it in DB, then print for user  
+
+        # extract data from json and store it in DB, then print for user
         data = response.json()
         montype = ""
         for attr in data["types"]:
             montype += attr["type"]["name"] + " "
-        monobject = database.Pokemon(data["id"], data["name"], data["height"], data["weight"], montype)
+        monobject = database.Pokemon(
+            data["id"], data["name"], data["height"], data["weight"], montype
+        )
         monobject.add_mon_todb()
         return monobject
     else:
         return dbmon
-        
-        
+
 
 def get_team(userobject):
     teamobject = database.Team.get_team(userobject.userid)
@@ -73,7 +72,7 @@ def get_team(userobject):
 
 
 def make_team():
-    pass     
+    pass
 
 
 def get_user(username):
@@ -83,34 +82,35 @@ def get_user(username):
         restart_program()
     print(user.userid)
     return user
-    
+
+
 def create_user(username):
     userobject = database.User.get_user(username)
     if userobject:
         print("There is already a user with that username!")
-        interface.start_team()
+        restart_program()
     userobject = database.User.create_user(username)
     database.Team.create_team(userobject.userid)
     return userobject
-    
+
+
 # This function literally just prints the text to stdout, but with a randomized delay so it *kinda* scrolls like in a game
 def learn_more():
     text = "This project utilizes the PokeApi, which can be found at https://pokeapi.co/\nFor more information about Pokemon, please visit https://www.serebii.net/\n"
     for item in text:
-        print(item, end='')
+        print(item, end="")
         sys.stdout.flush()
         sleeptimer = random.uniform(0.03, 0.099)
         time.sleep(sleeptimer)
 
     ellipsis = "..."
-    time.sleep(.5)
+    time.sleep(0.5)
     for item in ellipsis:
-        print(item, end=' ')
+        print(item, end=" ")
         sys.stdout.flush()
-        time.sleep(.4)
+        time.sleep(0.4)
     print()
-    
 
 
 def restart_program():
-    os.execv(sys.executable, ['python'] + sys.argv)
+    os.execv(sys.executable, ["python"] + sys.argv)

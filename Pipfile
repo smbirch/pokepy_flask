@@ -6,8 +6,10 @@ name = "pypi"
 [packages]
 requests = "*"
 questionary = "*"
+textual = "*"
 
 [dev-packages]
+black = "*"
 
 [requires]
 python_version = "3.11"
