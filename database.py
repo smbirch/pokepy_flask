@@ -56,7 +56,7 @@ class User:
     @staticmethod
     def get_user(username):
         with DBConnection() as db:
-            query = "SELECT * FROM users WHERE username = ?"
+            query = "SELECT * FROM users WHERE username = ?;"
             db.execute_query(query, username)
             if db.cursor == None:
                 return None
@@ -69,7 +69,7 @@ class User:
     def get_all_users():
         users = []
         with DBConnection() as db:
-            query = "SELECT * FROM users"
+            query = "SELECT * FROM users;"
             db.execute_query(query)
             if db.cursor == None:
                 return None
@@ -152,7 +152,7 @@ class Team:
     def delete_team(self):
         print("Deleting team!")
         with DBConnection() as db:
-            db.execute_query("DELETE FROM teams WHERE teamid=?", self.teamid)
+            db.execute_query("DELETE FROM teams WHERE teamid=?;", self.teamid)
 
         newteam = Team.create_team(self.teamid)
         return newteam
@@ -180,9 +180,10 @@ class Team:
             db.execute_query(query)
 
     def remove_mon_from_team(self, montoremove_pos):
+        # makes a string to represent column name in db
         column_pos = f"mon{montoremove_pos}"
         with DBConnection() as db:
-            query = "UPDATE teams set {0}='None' WHERE teamid='{1}'".format(
+            query = "UPDATE teams set {0}='None' WHERE teamid='{1}';".format(
                 column_pos, self.teamid
             )
             db.execute_query(query)
@@ -191,7 +192,7 @@ class Team:
     def get_team(teamid):
         # get team by searching for userID
         with DBConnection() as db:
-            db.execute_query("SELECT * FROM teams WHERE teamid = ?", teamid)
+            db.execute_query("SELECT * FROM teams WHERE teamid = ?;", teamid)
             if db.cursor == None:
                 return Team.create_team(teamid)
             else:
