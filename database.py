@@ -157,9 +157,6 @@ class Team:
         newteam = Team.create_team(self.teamid)
         return newteam
 
-    # def getmonfromteam(self, monname):
-    #     return getattr(self, monname)
-
     def team_size(self):
         size = 0
         mons = [self.mon1, self.mon2, self.mon3, self.mon4, self.mon5, self.mon6]

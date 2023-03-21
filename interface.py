@@ -122,7 +122,7 @@ def build_team(userobject):
         start_interface(userobject)
 
 
-# TODO: Move most of this logic out into the controller
+# TODO: Move most of this logic out into the controller.
 # This module should be for user interaction, and less logic
 def remove_mon_from_team(userobject, teamobject):
     print(f"\n{userobject.username.capitalize()}'s current team:\n{teamobject}")

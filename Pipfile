@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 requests = "*"
 questionary = "*"
-textual = "*"
 
 [dev-packages]
 black = "*"
