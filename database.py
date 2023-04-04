@@ -3,6 +3,9 @@ from sqlite3 import Error
 import os
 import datetime
 import uuid
+import sys
+
+import bcrypt
 
 database_file = "data/pokepy.db"
 
@@ -45,25 +48,44 @@ class DBConnection:
 
 
 class User:
-    def __init__(self, userid, username, date_created):
+    def __init__(self, userid, username, password, date_created):
         self.userid = userid
         self.username = username
+        self.password = password
         self.date_created = date_created
 
     def __str__(self):
         return self.username
 
     @staticmethod
-    def get_user(username):
+    def check_for_user(username):
         with DBConnection() as db:
             query = "SELECT * FROM users WHERE username = ?;"
             db.execute_query(query, username)
-            if db.cursor == None:
-                return None
+            print(db.cursor.rowcount)
+
+    @staticmethod
+    def get_user(username, password):
+        with DBConnection() as db:
+            query = "SELECT * FROM users WHERE username = ?;"
+            db.execute_query(query, username)
+
+            for row in db.cursor:
+                userobject = User(*row)
+            print(userobject.username)
+            if not userobject:
+                print(userobject)
+                print("Closing")
+                sys.exit()
+
+            if (
+                bcrypt.hashpw(str.encode(password), userobject.password)
+                != userobject.password
+            ):
+                return "401_unauthorized"
+
             else:
-                for row in db.cursor:
-                    userobject = User(*row)
-                    return userobject
+                return userobject
 
     @staticmethod
     def get_all_users():
@@ -71,7 +93,8 @@ class User:
         with DBConnection() as db:
             query = "SELECT * FROM users;"
             db.execute_query(query)
-            if db.cursor == None:
+            if db.cursor == None:  # <- this isnt working
+                print("none")
                 return None
             else:
                 for row in db.cursor:
@@ -79,18 +102,23 @@ class User:
                 return users
 
     @staticmethod
-    def create_user(username):
+    def create_user(username, password):
         with DBConnection() as db:
             userid = uuid.uuid4().hex
             now = datetime.datetime.now()
             date_created = f"{now.date()} {now.time()}"
 
+            pwByte = password.encode()
+            print(f"PWByte: {pwByte}")
+            pwHash = bcrypt.hashpw(pwByte, bcrypt.gensalt())
+            print(pwHash)
+
             create_user_sql = """INSERT INTO users(
-                userid, username, date_created)
-                VALUES(?, ?, ?);"""
-            userdata = (userid, username, date_created)
+                userid, username, password, date_created)
+                VALUES(?, ?, ?, ?);"""
+            userdata = [userid, username, pwHash, date_created]
             db.execute_query(create_user_sql, *userdata)
-            userobject = User(userid, username, date_created)
+            userobject = User(userid, username.lower(), password, date_created)
         return userobject
 
 
@@ -222,6 +250,7 @@ def create_db():
         users_table = """CREATE TABLE IF NOT EXISTS users(
             userid TEXT PRIMARY KEY, 
             username TEXT UNIQUE,
+            password TEXT,
             date_created INTEGER);
             """
         db.execute_query(users_table)

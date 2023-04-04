@@ -12,18 +12,30 @@ def setup_user():
     )
     userslist = database.User.get_all_users()
     print(f"Accounts present:\n{userslist}\n")
+
     hasusername = questionary.select(
         "Do you have an account already?", choices=["Yes", "No", "Quit"]
     ).ask()
     if hasusername == "Yes":
         username = input("Enter your username: ")
-        userobject = controller.get_user(username)
+        password = questionary.password("\nEnter your password: ").ask()
+
+        userobject = controller.get_user(username, password)
         start_interface(userobject)
 
     elif hasusername == "No":
         print("let's create a new user...")
-        username = input("Enter your username: ")
-        userobject = controller.create_user(username)
+        username = input("\nEnter your username: ")
+
+        password = questionary.password("\nEnter your password: ").ask()
+        passwordcheck = questionary.password("Re-enter your password: ").ask()
+        if password != passwordcheck:
+            print("\nThese passwords do not match!\nPlease try again")
+            controller.restart_program()
+
+        # database.User.check_for_user(username)
+        userobject = controller.create_user(username, password)
+
         start_interface(userobject)
 
     elif hasusername == "Quit":

@@ -1,9 +1,11 @@
 import requests
-import interface
 import time
 import sys
 import random
 import os
+
+import bcrypt
+import interface
 
 import database
 
@@ -34,6 +36,7 @@ def get_all_mons():
     return
 
 
+# 3/25: issue: calling a pokemon that doesnt exist restarts program completely
 def get_single_mon(monname):
     if monname == "" or monname == " ":
         print("Please check your spelling and try again.\n")
@@ -67,7 +70,6 @@ def get_single_mon(monname):
 
 def get_team(userobject):
     teamobject = database.Team.get_team(userobject.userid)
-    # print(teamobject)
     return teamobject
 
 
@@ -75,26 +77,37 @@ def make_team():
     pass
 
 
-def get_user(username):
-    user = database.User.get_user(username)
+def get_user(username, password):
+    user = database.User.get_user(username, password)
+
     if not user:
-        print("User not found!")
+        print("\nUser not found!")
         restart_program()
-    print(user.userid)
-    return user
+    elif user == "401_unauthorized":
+        print("Incorrect username or password!")
+        restart_program()
+    else:
+        return user
 
 
-def create_user(username):
-    userobject = database.User.get_user(username)
+# 3/23: working on adding password
+# 3/25: issue: loading an account that does not exist causes UnBoundLocalError
+# ^^^This may be fixed and needs testing
+# ^^^This is not fixed: now cannot call any user
+
+# 3/25: issue: creating an account with a taken username causes database error, needs to be more user friendly
+def create_user(username, password):
+    userobject = database.User.check_for_user(username)
     if userobject:
         print("There is already a user with that username!")
         restart_program()
-    userobject = database.User.create_user(username)
+
+    userobject = database.User.create_user(username, password)
     database.Team.create_team(userobject.userid)
     return userobject
 
 
-# This function literally just prints the text to stdout, but with a randomized delay so it *kinda* scrolls like in a game
+# This function literally just prints the text to stdout, but with a randomized delay so it *kinda* scrolls like in a videogame
 def learn_more():
     text = "This project utilizes the PokeApi, which can be found at https://pokeapi.co/\nFor more information about Pokemon, please visit https://www.serebii.net/\n"
     for item in text:
