@@ -10,7 +10,10 @@ def setup_user():
     print(
         "\nWelcome to Pokepy! First, you will need to register or load your account.\n"
     )
-    userslist = database.User.get_all_users()
+    userslist = controller.get_all_users()
+    # Need to break this out into two separate functions:
+    # load user
+    # create new user
     print(f"Accounts present:\n{userslist}\n")
 
     hasusername = questionary.select(

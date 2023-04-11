@@ -26,6 +26,7 @@ class DBConnection:
             except Error as e:
                 print("Error executing db query")
                 print(e)
+                return "db_query_execution_error"
 
     def commit(self):
         try:
@@ -69,14 +70,8 @@ class User:
         with DBConnection() as db:
             query = "SELECT * FROM users WHERE username = ?;"
             db.execute_query(query, username)
-
             for row in db.cursor:
                 userobject = User(*row)
-            print(userobject.username)
-            if not userobject:
-                print(userobject)
-                print("Closing")
-                sys.exit()
 
             if (
                 bcrypt.hashpw(str.encode(password), userobject.password)
@@ -109,16 +104,21 @@ class User:
             date_created = f"{now.date()} {now.time()}"
 
             pwByte = password.encode()
-            print(f"PWByte: {pwByte}")
             pwHash = bcrypt.hashpw(pwByte, bcrypt.gensalt())
-            print(pwHash)
 
             create_user_sql = """INSERT INTO users(
                 userid, username, password, date_created)
                 VALUES(?, ?, ?, ?);"""
             userdata = [userid, username, pwHash, date_created]
-            db.execute_query(create_user_sql, *userdata)
-            userobject = User(userid, username.lower(), password, date_created)
+            if (
+                db.execute_query(create_user_sql, *userdata)
+                == "db_query_execution_error"
+            ):
+                print("ERROR creating user")
+                return None
+            else:
+                userobject = User(userid, username.lower(), password, date_created)
+
         return userobject
 
 

@@ -84,18 +84,20 @@ def get_user(username, password):
         print("\nUser not found!")
         restart_program()
     elif user == "401_unauthorized":
-        print("Incorrect username or password!")
+        print("Incorrect username or password!\nPlease try again")
         restart_program()
     else:
         return user
 
 
-# 3/23: working on adding password
-# 3/25: issue: loading an account that does not exist causes UnBoundLocalError
-# ^^^This may be fixed and needs testing
-# ^^^This is not fixed: now cannot call any user
+def get_all_users():
+    userslist = database.User.get_all_users()
+    if not userslist:
+        print("No accounts found\n")
+        return None
+    return userslist
 
-# 3/25: issue: creating an account with a taken username causes database error, needs to be more user friendly
+
 def create_user(username, password):
     userobject = database.User.check_for_user(username)
     if userobject:
@@ -103,11 +105,14 @@ def create_user(username, password):
         restart_program()
 
     userobject = database.User.create_user(username, password)
+    if userobject == None:
+        print("This username is already taken!\n")
+        restart_program()
     database.Team.create_team(userobject.userid)
     return userobject
 
 
-# This function literally just prints the text to stdout, but with a randomized delay so it *kinda* scrolls like in a videogame
+# This function literally just prints the text to stdout, but with a randomized delay so it scrolls in a cooler way
 def learn_more():
     text = "This project utilizes the PokeApi, which can be found at https://pokeapi.co/\nFor more information about Pokemon, please visit https://www.serebii.net/\n"
     for item in text:
