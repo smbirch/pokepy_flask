@@ -93,7 +93,6 @@ def get_user(username, password):
 def get_all_users():
     userslist = database.User.get_all_users()
     if not userslist:
-        print("No accounts found\n")
         return None
     return userslist
 

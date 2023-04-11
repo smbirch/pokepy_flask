@@ -88,13 +88,12 @@ class User:
         with DBConnection() as db:
             query = "SELECT * FROM users;"
             db.execute_query(query)
-            if db.cursor == None:  # <- this isnt working
-                print("none")
+
+            for row in db.cursor:
+                users.append(row[1])
+            if not users:
                 return None
-            else:
-                for row in db.cursor:
-                    users.append(row[1])
-                return users
+            return users
 
     @staticmethod
     def create_user(username, password):
