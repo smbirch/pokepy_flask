@@ -56,14 +56,19 @@ class User:
         self.date_created = date_created
 
     def __str__(self):
-        return self.username
+        return self.username.capitalize()
 
     @staticmethod
     def check_for_user(username):
         with DBConnection() as db:
             query = "SELECT * FROM users WHERE username = ?;"
             db.execute_query(query, username)
-            print(db.cursor.rowcount)
+            for row in db.cursor:
+                userobject = User(*row)
+            if not userobject:
+                return None
+            else:
+                return userobject
 
     @staticmethod
     def get_user(username, password):

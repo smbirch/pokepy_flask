@@ -11,9 +11,6 @@ def setup_user():
         "\nWelcome to Pokepy! First, you will need to register or load your account.\n"
     )
     userslist = controller.get_all_users()
-    # Need to break this out into two separate functions:
-    # load user
-    # create new user
     print(f"Accounts present:\n{userslist}\n")
 
     hasusername = questionary.select(
@@ -64,7 +61,8 @@ def start_interface(userobject):
     if question == "See one Pokemon":
         monname = input("Which pokemon do you want to see more about? ")
         mon = controller.get_single_mon(monname)
-        print(mon)
+        if mon:
+            print(mon)
         start_interface(userobject)
 
     elif question == "See all Pokemon":
@@ -137,10 +135,8 @@ def build_team(userobject):
         start_interface(userobject)
 
 
-# TODO: Move most of this logic out into the controller.
-# This module should be for user interaction, and less logic
 def remove_mon_from_team(userobject, teamobject):
-    print(f"\n{userobject.username.capitalize()}'s current team:\n{teamobject}")
+    print(f"\n{userobject.username}'s current team:\n{teamobject}")
     print("\n***")
     choices = []
     teamsize = database.Team.team_size(teamobject)

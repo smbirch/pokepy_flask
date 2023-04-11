@@ -36,7 +36,6 @@ def get_all_mons():
     return
 
 
-# 3/25: issue: calling a pokemon that doesnt exist restarts program completely
 def get_single_mon(monname):
     if monname == "" or monname == " ":
         print("Please check your spelling and try again.\n")
@@ -52,7 +51,7 @@ def get_single_mon(monname):
             print("There was an error processing the request...")
             print("Please check your spelling and try again.\n")
             time.sleep(1)
-            restart_program()
+            return
 
         # extract data from json and store it in DB, then print for user
         data = response.json()
@@ -104,6 +103,7 @@ def create_user(username, password):
         restart_program()
 
     userobject = database.User.create_user(username, password)
+    # Ideally you would never receive None here...
     if userobject == None:
         print("This username is already taken!\n")
         restart_program()
