@@ -4,9 +4,6 @@ import sys
 import random
 import os
 
-import bcrypt
-import interface
-
 import database
 
 
@@ -28,12 +25,11 @@ def get_all_mons():
         restart_program()
 
     data = response.json()
-    mon_id = 1
+    allmons = []
     for item in data["results"]:
-        print(str(mon_id) + " - " + item["name"])
-        mon_id += 1
-    print("\n")
-    return
+        allmons.append(item["name"])
+
+    return allmons
 
 
 def get_single_mon(monname):
@@ -72,6 +68,17 @@ def get_team(userobject):
     return teamobject
 
 
+def make_random_team(userobject, teamobject):
+    new_teamobject = database.Team.delete_team(teamobject)
+
+    allmons = get_all_mons()
+    for _ in range(6):
+        randmon = random.choice(allmons)
+        monobject = get_single_mon(randmon)
+        database.Team.add_mon_to_team(new_teamobject, monobject)
+    print(database.Team.get_team(userobject.userid))
+
+
 def make_team():
     pass
 
@@ -83,7 +90,7 @@ def get_user(username, password):
         print("\nUser not found!")
         restart_program()
     elif user == "401_unauthorized":
-        print("Incorrect username or password!\nPlease try again")
+        print("Incorrect password!\nPlease try again")
         restart_program()
     else:
         return user
@@ -97,7 +104,7 @@ def get_all_users():
 
 
 def create_user(username, password):
-    userobject = database.User.check_for_user(username)
+    userobject = database.User.get_user(username, password)
     if userobject:
         print("There is already a user with that username!")
         restart_program()
