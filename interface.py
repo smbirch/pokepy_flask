@@ -7,11 +7,13 @@ import database
 
 
 def setup_user():
-    print(
-        "\nWelcome to Pokepy! First, you will need to register or load your account.\n"
-    )
+    print("\nWelcome to Pokepy!\n")
     userslist = controller.get_all_users()
+    if not userslist:
+        create_user()
+
     print(f"Accounts present:\n{userslist}\n")
+    print("First, you will need to register or load your account.\n")
 
     hasusername = questionary.select(
         "Do you have an account already?", choices=["Yes", "No", "Quit"]
@@ -24,18 +26,7 @@ def setup_user():
         start_interface(userobject)
 
     elif hasusername == "No":
-        print("let's create a new user...")
-        username = input("\nEnter your username: ")
-
-        password = questionary.password("\nEnter your password: ").ask()
-        passwordcheck = questionary.password("Re-enter your password: ").ask()
-        if password != passwordcheck:
-            print("\nThese passwords do not match!\nPlease try again")
-            controller.restart_program()
-
-        # database.User.check_for_user(username)
-        userobject = controller.create_user(username, password)
-        start_interface(userobject)
+        create_user()
 
     elif hasusername == "Quit":
         print("Goodbye")
@@ -43,6 +34,21 @@ def setup_user():
 
     else:
         controller.restart_program()
+
+
+def create_user():
+    print("let's create a new user...")
+    username = input("\nEnter your username: ")
+
+    password = questionary.password("\nEnter your password: ").ask()
+    passwordcheck = questionary.password("Re-enter your password: ").ask()
+    if password != passwordcheck:
+        print("\nThese passwords do not match!\nPlease try again")
+        controller.restart_program()
+
+    # database.User.check_for_user(username)
+    userobject = controller.create_user(username, password)
+    start_interface(userobject)
 
 
 def start_interface(userobject):
@@ -92,12 +98,12 @@ def build_team(userobject):
 
     if teamsize == 6:
         print("\nYour team is full!")
-        print("You will need to remove a mon before adding a new one")
+        print("You will need to remove a mon before adding a new one...\n")
     else:
         print(f"\nYour team currently has {teamsize}/6 members")
         print(f"You can add {6 - teamsize} more.\n")
     question = questionary.select(
-        "What do you want to do?",
+        "\nWhat do you want to do?",
         choices=[
             "See your team",
             "Add a Pokemon to your team",
@@ -124,12 +130,19 @@ def build_team(userobject):
         remove_mon_from_team(userobject, teamobject)
 
     elif question == "Delete your team":
-        print("Deleting team!")
-        database.Team.delete_team(teamobject)
-        # build_team(userobject)
+        askdelete = questionary.select(
+            "Are you sure you want to delete your team?", choices=["Yes", "No"]
+        ).ask()
+        if askdelete == "Yes":
+            print("Deleting team!")
+            database.Team.delete_team(teamobject)
+            build_team(userobject)
+        else:
+            build_team(userobject)
 
     elif question == "Get a random team":
         controller.make_random_team(userobject, teamobject)
+        build_team(userobject)
 
     elif question == "See a list of all Pokemon":
         monslist = controller.get_all_mons()
@@ -150,8 +163,8 @@ def build_team(userobject):
 
 
 def remove_mon_from_team(userobject, teamobject):
-    print(f"\n{userobject.username}'s current team:\n{teamobject}")
-    print("\n***")
+    # print(f"\n{userobject.username}'s current team:\n{teamobject}")
+    # print("\n***\n")
     choices = []
     teamsize = database.Team.team_size(teamobject)
     if teamsize == 0:
@@ -159,7 +172,7 @@ def remove_mon_from_team(userobject, teamobject):
         build_team(userobject)
     else:
         for i in range(teamsize):
-            choices.append(getattr(teamobject, f"mon{i + 1}"))  # TODO: fix this
+            choices.append(getattr(teamobject, f"mon{i + 1}"))
 
         question = questionary.checkbox(
             "Select mon(s) to remove:",
