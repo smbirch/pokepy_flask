@@ -182,6 +182,11 @@ class Team:
                     mon, self.teamid
                 )
                 db.execute_query(query)
+        # Updating current object with new empty team
+        for attr, _ in self.__dict__.items():
+            if attr == "teamid":
+                continue
+            setattr(self, attr, "None")
 
         return
 
@@ -197,6 +202,9 @@ class Team:
     def add_mon_to_team(self, monobject):
         # gets current size of team, calculates mon position in team roster
         monposition = Team.team_size(self) + 1
+        # wraps around if team is already full
+        if monposition == 7:
+            monposition = 1
         nextmonposition = f"mon{monposition}"
 
         with DBConnection() as db:
@@ -204,6 +212,13 @@ class Team:
                 nextmonposition, monobject.name, self.teamid
             )
             db.execute_query(query)
+            # This updates the team object to reflect new mon
+            for attr, value in self.__dict__.items():
+                if value == "None":
+                    setattr(self, attr, monobject.name)
+                    break
+
+            return self
 
     def remove_mon_from_team(self, montoremove_pos):
         # makes a string to represent column name in db
