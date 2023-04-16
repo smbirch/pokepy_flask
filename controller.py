@@ -69,13 +69,13 @@ def get_team(userobject):
 
 
 def make_random_team(userobject, teamobject):
-    new_teamobject = database.Team.delete_team(teamobject)
+    database.Team.delete_team(teamobject)
 
     allmons = get_all_mons()
     for _ in range(6):
         randmon = random.choice(allmons)
         monobject = get_single_mon(randmon)
-        database.Team.add_mon_to_team(new_teamobject, monobject)
+        database.Team.add_mon_to_team(teamobject, monobject)
     print(database.Team.get_team(userobject.userid))
 
 

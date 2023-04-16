@@ -121,7 +121,7 @@ def build_team(userobject):
     elif question == "Delete your team":
         print("Deleting team!")
         database.Team.delete_team(teamobject)
-        build_team(userobject)
+        # build_team(userobject)
 
     elif question == "Get a random team":
         controller.make_random_team(userobject, teamobject)

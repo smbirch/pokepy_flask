@@ -175,11 +175,15 @@ class Team:
         return f"1: {self.mon1}\n2: {self.mon2}\n3: {self.mon3}\n4: {self.mon4}\n5: {self.mon5}\n6: {self.mon6}"
 
     def delete_team(self):
-        with DBConnection() as db:
-            db.execute_query("DELETE FROM teams WHERE teamid=?;", self.teamid)
+        rows = ["mon1", "mon2", "mon3", "mon4", "mon5", "mon6"]
+        for mon in rows:
+            with DBConnection() as db:
+                query = "UPDATE teams SET {0}='None' WHERE teamid='{1}';".format(
+                    mon, self.teamid
+                )
+                db.execute_query(query)
 
-        newteam = Team.create_team(self.teamid)
-        return newteam
+        return
 
     def team_size(self):
         size = 0
@@ -205,7 +209,7 @@ class Team:
         # makes a string to represent column name in db
         column_pos = f"mon{montoremove_pos}"
         with DBConnection() as db:
-            query = "UPDATE teams set {0}='None' WHERE teamid='{1}';".format(
+            query = "UPDATE teams SET {0}='None' WHERE teamid='{1}';".format(
                 column_pos, self.teamid
             )
             db.execute_query(query)
