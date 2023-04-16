@@ -65,7 +65,12 @@ def start_interface(userobject):
         start_interface(userobject)
 
     elif question == "See all Pokemon":
-        controller.get_all_mons()
+        monslist = controller.get_all_mons()
+        mon_id = 1
+        for item in monslist:
+            print(str(mon_id) + " - " + item)
+            mon_id += 1
+        print()
         start_interface(userobject)
 
     elif question == "See your team":
@@ -130,9 +135,9 @@ def build_team(userobject):
         monslist = controller.get_all_mons()
         mon_id = 1
         for item in monslist:
-            print(str(mon_id) + " - " + item["name"])
+            print(str(mon_id) + " - " + item)
             mon_id += 1
-
+        print()
         build_team(userobject)
 
     elif question == "See a single Pokemon":
