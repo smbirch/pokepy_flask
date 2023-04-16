@@ -3,7 +3,6 @@ from sqlite3 import Error
 import os
 import datetime
 import uuid
-import sys
 
 import bcrypt
 
@@ -59,26 +58,18 @@ class User:
         return self.username.capitalize()
 
     @staticmethod
-    def check_for_user(username):
-        with DBConnection() as db:
-            query = "SELECT * FROM users WHERE username = ?;"
-            db.execute_query(query, username)
-            for row in db.cursor:
-                userobject = User(*row)
-            if not userobject:
-                return None
-            else:
-                return userobject
-
-    @staticmethod
     def get_user(username, password):
         with DBConnection() as db:
             query = "SELECT * FROM users WHERE username = ?;"
             db.execute_query(query, username)
+            userobject = None
+
             for row in db.cursor:
                 userobject = User(*row)
+            if not userobject:
+                return None
 
-            if (
+            elif (
                 bcrypt.hashpw(str.encode(password), userobject.password)
                 != userobject.password
             ):
@@ -139,6 +130,8 @@ class Pokemon:
 
     # adds a single mon to database mons table
     def add_mon_todb(self):
+        if dbmon := self.get_mon(self.name):
+            return dbmon
         with DBConnection() as db:
             insert_with_params = """INSERT INTO mons(
                     monid, name, height, weight, type)
@@ -182,12 +175,20 @@ class Team:
         return f"1: {self.mon1}\n2: {self.mon2}\n3: {self.mon3}\n4: {self.mon4}\n5: {self.mon5}\n6: {self.mon6}"
 
     def delete_team(self):
-        print("Deleting team!")
-        with DBConnection() as db:
-            db.execute_query("DELETE FROM teams WHERE teamid=?;", self.teamid)
+        rows = ["mon1", "mon2", "mon3", "mon4", "mon5", "mon6"]
+        for mon in rows:
+            with DBConnection() as db:
+                query = "UPDATE teams SET {0}='None' WHERE teamid='{1}';".format(
+                    mon, self.teamid
+                )
+                db.execute_query(query)
+        # Updating current object with new empty team
+        for attr, _ in self.__dict__.items():
+            if attr == "teamid":
+                continue
+            setattr(self, attr, "None")
 
-        newteam = Team.create_team(self.teamid)
-        return newteam
+        return
 
     def team_size(self):
         size = 0
@@ -199,7 +200,11 @@ class Team:
         return size
 
     def add_mon_to_team(self, monobject):
+        # gets current size of team, calculates mon position in team roster
         monposition = Team.team_size(self) + 1
+        # wraps around if team is already full
+        if monposition == 7:
+            monposition = 1
         nextmonposition = f"mon{monposition}"
 
         with DBConnection() as db:
@@ -207,12 +212,19 @@ class Team:
                 nextmonposition, monobject.name, self.teamid
             )
             db.execute_query(query)
+            # This updates the team object to reflect new mon
+            for attr, value in self.__dict__.items():
+                if value == "None":
+                    setattr(self, attr, monobject.name)
+                    break
+
+            return self
 
     def remove_mon_from_team(self, montoremove_pos):
         # makes a string to represent column name in db
         column_pos = f"mon{montoremove_pos}"
         with DBConnection() as db:
-            query = "UPDATE teams set {0}='None' WHERE teamid='{1}';".format(
+            query = "UPDATE teams SET {0}='None' WHERE teamid='{1}';".format(
                 column_pos, self.teamid
             )
             db.execute_query(query)

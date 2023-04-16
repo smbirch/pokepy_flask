@@ -35,7 +35,6 @@ def setup_user():
 
         # database.User.check_for_user(username)
         userobject = controller.create_user(username, password)
-
         start_interface(userobject)
 
     elif hasusername == "Quit":
@@ -99,6 +98,7 @@ def build_team(userobject):
             "Add a Pokemon to your team",
             "Remove a Pokemon from your team",
             "Delete your team",
+            "Get a random team",
             "See a list of all Pokemon",
             "See a single Pokemon",
             "Go back",
@@ -119,11 +119,20 @@ def build_team(userobject):
         remove_mon_from_team(userobject, teamobject)
 
     elif question == "Delete your team":
+        print("Deleting team!")
         database.Team.delete_team(teamobject)
-        build_team(userobject)
+        # build_team(userobject)
+
+    elif question == "Get a random team":
+        controller.make_random_team(userobject, teamobject)
 
     elif question == "See a list of all Pokemon":
-        controller.get_all_mons()
+        monslist = controller.get_all_mons()
+        mon_id = 1
+        for item in monslist:
+            print(str(mon_id) + " - " + item["name"])
+            mon_id += 1
+
         build_team(userobject)
 
     elif question == "See a single Pokemon":
