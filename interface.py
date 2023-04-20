@@ -46,7 +46,6 @@ def create_user():
         print("\nThese passwords do not match!\nPlease try again")
         controller.restart_program()
 
-    # database.User.check_for_user(username)
     userobject = controller.create_user(username, password)
     start_interface(userobject)
 
@@ -163,8 +162,6 @@ def build_team(userobject):
 
 
 def remove_mon_from_team(userobject, teamobject):
-    # print(f"\n{userobject.username}'s current team:\n{teamobject}")
-    # print("\n***\n")
     choices = []
     teamsize = database.Team.team_size(teamobject)
     if teamsize == 0:

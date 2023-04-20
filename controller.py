@@ -6,28 +6,33 @@ import os
 
 import database
 
+allmons = []
+
 
 def get_all_mons():
-    try:
-        response = requests.get("https://pokeapi.co/api/v2/pokemon?limit=151&offset=0")
-        response.raise_for_status()
+    global allmons
+    if len(allmons) == 0:
+        try:
+            response = requests.get(
+                "https://pokeapi.co/api/v2/pokemon?limit=151&offset=0"
+            )
+            response.raise_for_status()
 
-    except requests.exceptions.HTTPError:
-        print("There was an error processing the request...\n")
-        print("restarting")
-        ellipsis = "..."
-        time.sleep(0.5)
-        for item in ellipsis:
-            print(item, end=" ")
-            sys.stdout.flush()
-            time.sleep(0.4)
-        print()
-        restart_program()
+        except requests.exceptions.HTTPError:
+            print("There was an error processing the request...\n")
+            print("restarting")
+            ellipsis = "..."
+            time.sleep(0.5)
+            for item in ellipsis:
+                print(item, end=" ")
+                sys.stdout.flush()
+                time.sleep(0.4)
+            print()
+            restart_program()
 
-    data = response.json()
-    allmons = []
-    for item in data["results"]:
-        allmons.append(item["name"])
+        data = response.json()
+        for item in data["results"]:
+            allmons.append(item["name"])
 
     return allmons
 
@@ -68,7 +73,7 @@ def get_team(userobject):
     return teamobject
 
 
-def make_random_team(userobject, teamobject):
+def make_random_team(teamobject):
     database.Team.delete_team(teamobject)
 
     allmons = get_all_mons()
@@ -118,9 +123,8 @@ def create_user(username, password):
     return userobject
 
 
-# This function literally just prints the text to stdout, but with a randomized delay so it scrolls in a cooler way
 def learn_more():
-    text = "This project utilizes the PokeApi, which can be found at https://pokeapi.co/\nFor more information about Pokemon, please visit https://www.serebii.net/\n"
+    text = "\nThis project utilizes the PokeApi, which can be found at https://pokeapi.co/\nFor more information about Pokemon, please visit https://www.serebii.net/\n"
     for item in text:
         print(item, end="")
         sys.stdout.flush()
