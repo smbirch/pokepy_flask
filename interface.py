@@ -171,13 +171,12 @@ def remove_mon_from_team(userobject, teamobject):
         for i in range(teamsize):
             choices.append(getattr(teamobject, f"mon{i + 1}"))
 
-        question = questionary.checkbox(
-            "Select mon(s) to remove:",
+        question = questionary.select(
+            "Select mon to remove:",
             choices,
         ).ask()
 
         for position, montoremove in enumerate(choices):
-            if montoremove in question:
-                position += 1
-                database.Team.remove_mon_from_team(teamobject, position)
+            if montoremove == question:
+                controller.update_team(teamobject, position, "None")
         build_team(userobject)

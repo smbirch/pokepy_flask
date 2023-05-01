@@ -220,12 +220,12 @@ class Team:
 
             return self
 
-    def remove_mon_from_team(self, montoremove_pos):
+    def update_team(self, montoupdate_pos, newstring):
         # makes a string to represent column name in db
-        column_pos = f"mon{montoremove_pos}"
+        column_pos = f"mon{montoupdate_pos}"
         with DBConnection() as db:
-            query = "UPDATE teams SET {0}='None' WHERE teamid='{1}';".format(
-                column_pos, self.teamid
+            query = "UPDATE teams SET {0}='{1}' WHERE teamid='{2}';".format(
+                column_pos, newstring, self.teamid
             )
             db.execute_query(query)
 

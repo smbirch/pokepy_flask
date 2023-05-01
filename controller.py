@@ -89,6 +89,29 @@ def make_team():
     pass
 
 
+def update_team(teamobject, position, newmon):
+    mons = [
+        teamobject.mon1,
+        teamobject.mon2,
+        teamobject.mon3,
+        teamobject.mon4,
+        teamobject.mon5,
+        teamobject.mon6,
+    ]
+
+    # move mon in question to end of list and then replace it
+    mons[position] = newmon
+    mons.append(mons.pop(position))
+    print(mons)
+
+    for index, mon in enumerate(mons):
+        database.Team.update_team(teamobject, index + 1, mon)
+
+
+def arrange_team(teamobject):
+    pass
+
+
 def get_user(username, password):
     user = database.User.get_user(username, password)
 
