@@ -85,10 +85,6 @@ def make_random_team(teamobject):
     return teamobject
 
 
-def make_team():
-    pass
-
-
 def update_team(teamobject, position, newmon):
     mons = [
         teamobject.mon1,
@@ -106,10 +102,6 @@ def update_team(teamobject, position, newmon):
 
     for index, mon in enumerate(mons):
         database.Team.update_team(teamobject, index + 1, mon)
-
-
-def arrange_team(teamobject):
-    pass
 
 
 def get_user(username, password):
