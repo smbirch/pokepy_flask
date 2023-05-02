@@ -98,7 +98,6 @@ def update_team(teamobject, position, newmon):
     # move mon in question to end of list and then replace it
     mons[position] = newmon
     mons.append(mons.pop(position))
-    print(mons)
 
     for index, mon in enumerate(mons):
         database.Team.update_team(teamobject, index + 1, mon)

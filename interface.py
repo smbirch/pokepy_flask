@@ -46,7 +46,7 @@ def create_user():
         print("\nThese passwords do not match!\nPlease try again")
         controller.restart_program()
 
-    userobject = controller.create_user(username, password)
+    userobject = controller.create_user(username.lower(), password)
     start_interface(userobject)
 
 
@@ -64,9 +64,10 @@ def start_interface(userobject):
 
     if question == "See one Pokemon":
         monname = input("Which pokemon do you want to see more about? ")
-        mon = controller.get_single_mon(monname)
+        mon = controller.get_single_mon(monname.lower())
         if mon:
             print(mon)
+
         start_interface(userobject)
 
     elif question == "See all Pokemon":
@@ -154,7 +155,8 @@ def build_team(userobject):
 
     elif question == "See a single Pokemon":
         monname = input("Which pokemon do you want to see more about? ")
-        controller.get_single_mon(monname)
+        print(controller.get_single_mon(monname))
+
         build_team(userobject)
 
     elif question == "Go back":
