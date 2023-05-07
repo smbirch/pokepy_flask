@@ -46,7 +46,7 @@ def create_user():
         print("\nThese passwords do not match!\nPlease try again")
         controller.restart_program()
 
-    userobject = controller.create_user(username.lower(), password)
+    userobject = controller.create_user(username, password)
     start_interface(userobject)
 
 
@@ -58,13 +58,14 @@ def start_interface(userobject):
             "See all Pokemon",
             "See your team",
             "Learn more",
+            "Delete my account",
             "Exit",
         ],
     ).ask()
 
     if question == "See one Pokemon":
         monname = input("Which pokemon do you want to see more about? ")
-        mon = controller.get_single_mon(monname.lower())
+        mon = controller.get_single_mon(monname)
         if mon:
             print(mon)
 
@@ -85,6 +86,18 @@ def start_interface(userobject):
     elif question == "Learn more":
         controller.learn_more()
         start_interface(userobject)
+
+    elif question == "Delete my account":
+        askdelete = questionary.select(
+            "\nAre you sure you want to delete your account?", choices=["Yes", "No"]
+        ).ask()
+        if askdelete == "Yes":
+            print("\nDeleting account!")
+            controller.delete_account(userobject)
+
+        else:
+            print("\n\n")
+            start_interface(userobject)
 
     elif question == "Exit":
         print("\n'Goodbye Butterfree, I'll always remember you...'")

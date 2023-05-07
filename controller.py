@@ -5,6 +5,7 @@ import random
 import os
 
 import database
+import controller
 
 allmons = []
 
@@ -38,6 +39,7 @@ def get_all_mons():
 
 
 def get_single_mon(monname):
+    monname = monname.lower()
     if monname == "" or monname == " ":
         print("Please check your spelling and try again.\n")
         return
@@ -77,8 +79,8 @@ def make_random_team(teamobject):
     database.Team.delete_team(teamobject)
 
     allmonslist = get_all_mons()
+    random.shuffle(allmonslist)
     for _ in range(6):
-        random.shuffle(allmonslist)
         randmon = allmonslist.pop()
         monobject = get_single_mon(randmon)
         teamobject = database.Team.add_mon_to_team(teamobject, monobject)
@@ -124,7 +126,7 @@ def get_all_users():
 
 
 def create_user(username, password):
-    userobject = database.User.get_user(username, password)
+    userobject = database.User.get_user(username.lower(), password)
     if userobject:
         print("There is already a user with that username!")
         restart_program()
@@ -153,6 +155,15 @@ def learn_more():
         sys.stdout.flush()
         time.sleep(0.4)
     print()
+
+
+def delete_account(userobject):
+    if database.User.delete_account(userobject) == "Error deleting account":
+        controller.start_interface(userobject)
+    else:
+        print("\n\nYour account has been deleted\n\n")
+        time.sleep(2)
+        restart_program()
 
 
 def restart_program():

@@ -34,6 +34,10 @@ class DBConnection:
             print("db commit error")
             print(e)
 
+    def rollback(self):
+        self.conn.rollback()
+        print("db rollback")
+
     def close(self):
         if self.conn:
             self.conn.close()
@@ -115,6 +119,20 @@ class User:
                 userobject = User(userid, username.lower(), password, date_created)
 
         return userobject
+
+    def delete_account(self):
+        with DBConnection() as db:
+            queryone = """DELETE from users WHERE userid = ?"""
+            querytwo = """DELETE FROM teams WHERE teamid = ?"""
+            if (
+                db.execute_query(queryone, self.userid)
+                or db.execute_query(querytwo, self.userid) == "db_query_execution_error"
+            ):
+                print("\nrolling back...\n")
+                db.rollback()
+                return "Error deleting account"
+            else:
+                return
 
 
 class Pokemon:
@@ -273,7 +291,7 @@ def create_db():
         print("users table created")
 
         # create mons table
-        # cache data about monsters that have previously been called upon:
+        # caches data about monsters that have previously been called upon:
         mons_table = """CREATE TABLE IF NOT EXISTS mons(
             monid INTEGER PRIMARY KEY NOT NULL,
             name TEXT,
