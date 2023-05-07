@@ -1,0 +1,106 @@
+/*
+ * Base structure
+ */
+
+/* body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+} */
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.welcome {
+  color: #ed1c24;
+}
+
+.btn {
+  background-color: #7e177d;
+  border-color: #a5a5a5;
+}
+
+.btn-primary {
+  background-color: #7e177d;
+  border-color: #a5a5a5;
+}
+
+.btn-primary:hover {
+  background-color: #4cb050 !important;
+  border-color: #4cb050 !important;
+}
+
+.btn-primary:active {
+  background-color: #4cb050 !important;
+  border-color: #4cb050 !important;
+}
+
+.fade-in-text {
+  animation: fadeIn 5s;
+  pointer-events: auto;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Styles for mobile devices */
+@media (max-width: 600px) {
+  .container {
+    width: 100%;
+  }
+  .card {
+    width: 100%;
+  }
+  .form-group {
+    margin: 10px;
+  }
+  .form-control {
+    font-size: 0.8rem;
+  }
+  h1 {
+    font-size: 3rem;
+  }
+
+  a {
+    font-size: 0.8rem;
+  }
+  .btn-primary {
+    font-size: 1.2rem;
+    padding: 10px 20px;
+  }
+  .btn-link {
+    font-size: 0.8rem;
+  }
+  .btn {
+    font-size: 0.8rem;
+    padding: 8px 16px;
+  }
+}
+
+.links {
+  text-decoration: none;
+}
+
+footer {
+  font-size: 0.8rem;
+  text-align: center;
+  color: rgb(128, 128, 128);
+  padding: 10px;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+footer a {
+  color: rgba(128, 128, 128, 0.631);
+  text-decoration: none;
+}

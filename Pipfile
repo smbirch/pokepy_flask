@@ -7,6 +7,7 @@ name = "pypi"
 requests = "*"
 questionary = "*"
 bcrypt = "*"
+flask = "*"
 
 [dev-packages]
 black = "*"

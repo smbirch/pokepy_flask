@@ -1,0 +1,53 @@
+{% extends 'base.html' %} {% block content %}
+
+<div
+  class="container-fluid d-flex flex-column justify-content-center align-items-center"
+  style="height: 90vh"
+>
+  <h1 class="text-center mt-5 welcome" style="margin-bottom: 5%">
+    Welcome to PokePy!
+  </h1>
+  <div
+    class="row justify-content-center align-items-center"
+    style="height: 50vh; width: 100vw"
+  >
+    <div class="col-6">
+      <div class="card">
+        <div class="card-body text-center">
+          <form>
+            <div class="form-group">
+              <input
+                type="text"
+                class="form-control text-center mb-2"
+                placeholder="Username"
+              />
+            </div>
+            <div class="form-group">
+              <input
+                type="password"
+                class="form-control text-center mb-2"
+                placeholder="Password"
+              />
+            </div>
+            <div class="row justify-content-between align-items-center">
+              <div class="col">
+                <button type="submit" class="btn btn-primary">Sign up</button>
+              </div>
+            </div>
+            <div class="row mt-3 flex-column">
+              <div class="col">
+                <a href="#" class="text-muted mb-2 links"
+                  >Forgot your password?</a
+                >
+              </div>
+              <div class="col">
+                <a href="#" class="text-muted links">Create an account here!</a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
