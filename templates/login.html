@@ -14,30 +14,34 @@
     <div class="col-6">
       <div class="card">
         <div class="card-body text-center">
-          <form>
+          <form method="POST" action="">
             <div class="form-group">
-              <input
-                type="text"
-                class="form-control text-center mb-2"
-                placeholder="Username"
-              />
-            </div>
-            <div class="form-group">
-              <input
-                type="password"
-                class="form-control text-center mb-2"
-                placeholder="Password"
-              />
-            </div>
-            <div class="row justify-content-between align-items-center">
+              {{ form.hidden_tag() }}
+              <fieldset class="form-group">
+                <div class="form-group mb-2">
+                    {{ form.username.label(class="form-control-label") }}
+                    {{ form.username(class="form-control") }}
+                </div>
+                <div class="form-group mb-2">
+                    {{ form.password.label(class="form-control-label") }}
+                    {{ form.password(class="form-control") }}
+                </div>
+                <div class="form-checkbox mb-2">
+                  {{ form.remember(class="form-check-input") }}
+                  {{ form.remember.label(class="form-check-label")}}
+
+                </div>
+                
+            <div class="row justify-content-between align-items-center mb-2">
               <div class="col">
-                <button type="submit" class="btn btn-primary">Sign In!</button>
+                {{ form.submit(class="btn btn-primary")}}
+                
               </div>
             </div>
-            <div class="row mt-3 flex-column">
-              
+            
+              </div>
               <div class="col">
-                <a href="{{ url_for("register")}}" class="text-muted links">Create an account here!</a>
+                <a href="{{url_for('register')}}" class="text-muted links">Need an account? Click here to register!</a>
               </div>
             </div>
           </form>
