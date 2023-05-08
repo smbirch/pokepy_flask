@@ -33,8 +33,16 @@ def register():
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
+
         userobject = controller.create_user(username, password)
-        print(userobject)
+
+        if userobject == "duplicateaccounterror":
+            print("There is already a user with that username!")
+            print(userobject)
+            flash(f"There is already a user with that username!", "success")
+
+            return redirect(url_for("register"))
+
         flash(f"Account created for {form.username.data}!", "success")
         return redirect(url_for("userhome"))
 
@@ -49,6 +57,9 @@ def login():
         password = form.password.data
         userobject = controller.get_user(username, password)
         print(userobject)
+        if userobject == "404":
+            flash(f"No account found for {form.username.data}")
+            return redirect(url_for("login"))
 
         return redirect(url_for("userhome"))
 

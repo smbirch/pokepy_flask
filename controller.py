@@ -110,7 +110,8 @@ def get_user(username, password):
 
     if not user:
         print("\nUser not found!")
-        restart_program()
+        return "404"
+
     elif user == "401_unauthorized":
         print("Incorrect password!\nPlease try again")
         restart_program()
@@ -129,13 +130,15 @@ def create_user(username, password):
     userobject = database.User.get_user(username.lower(), password)
     if userobject:
         print("There is already a user with that username!")
+        return "duplicateaccounterror"
         restart_program()
 
     userobject = database.User.create_user(username, password)
     # Ideally you would never receive None here...
     if userobject == None:
         print("This username is already taken!\n")
-        restart_program()
+        return "duplicateaccounterror"
+
     database.Team.create_team(userobject.userid)
     return userobject
 
@@ -166,5 +169,7 @@ def delete_account(userobject):
         restart_program()
 
 
+# Passing this function for now to test web API
 def restart_program():
-    os.execv(sys.executable, ["python"] + sys.argv)
+    # os.execv(sys.executable, ["python"] + sys.argv)
+    pass

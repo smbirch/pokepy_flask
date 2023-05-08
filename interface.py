@@ -23,6 +23,8 @@ def setup_user():
         password = questionary.password("\nEnter your password: ").ask()
 
         userobject = controller.get_user(username, password)
+        if userobject == "404":
+            controller.restart_program()
         start_interface(userobject)
 
     elif hasusername == "No":
