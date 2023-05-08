@@ -105,3 +105,9 @@ footer a {
   color: #ffcb05;
   text-decoration: none;
 }
+
+.my-card {
+  outline: none;
+  border: 0;
+  background: transparent;
+}
