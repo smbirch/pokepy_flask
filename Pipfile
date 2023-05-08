@@ -8,6 +8,7 @@ requests = "*"
 questionary = "*"
 bcrypt = "*"
 flask = "*"
+flask-wtf = "*"
 
 [dev-packages]
 black = "*"

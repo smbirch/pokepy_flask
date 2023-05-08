@@ -1,0 +1,50 @@
+{% extends 'base.html' %} {% block content %}
+
+<div
+  class="container-fluid d-flex flex-column justify-content-center align-items-center"
+  style="height: 100vh"
+>
+  <h1 class="text-center mt-5 welcome" style="margin-bottom: 5%">Register Today!</h1>
+  <div
+    class="row justify-content-center align-items-center"
+    style="height: 50vh; width: 100vw"
+  >
+    <div class="col-6">
+      <div class="card">
+        <div class="card-body text-center">
+          <form method="POST" action="">
+            <div class="form-group">
+              {{ form.hidden_tag() }}
+              <fieldset class="form-group">
+                <div class="form-group mb-2">
+                    {{ form.username.label(class="form-control-label") }}
+                    {{ form.username(class="form-control") }}
+                </div>
+                <div class="form-group mb-2">
+                    {{ form.password.label(class="form-control-label") }}
+                    {{ form.password(class="form-control") }}
+                </div>
+                <div class="form-group mb-2">
+                    {{ form.confirmpassword.label(class="form-control-label") }}
+                    {{ form.confirmpassword(class="form-control") }}
+                </div>
+
+            <div class="row justify-content-between align-items-center mb-2">
+              <div class="col">
+                {{ form.submit(class="btn btn-primary")}}
+                
+              </div>
+            </div>
+            
+              </div>
+              <div class="col">
+                <a href="{{url_for('login')}}" class="text-muted links">Already have an account? Click here to sign in!</a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
