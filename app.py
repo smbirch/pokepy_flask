@@ -13,14 +13,10 @@ app.config["SECRET_KEY"] = "temporarysecretkey"
 def index():
     form = LoginForm()
     if request.method == "POST":
-        if form.validate_on_submit() == False:
+        if form.validate_on_submit():
             flash("All fields are required")
             return render_template("/", form=form)
         else:
-            username = form.username.data
-            password = form.password.data
-            userobject = controller.get_user(username, password)
-            print(userobject)
             return redirect("userhome")
 
     return render_template("index.html")
@@ -35,13 +31,25 @@ def userhome():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        userobject = controller.create_user(username, password)
+        print(userobject)
         flash(f"Account created for {form.username.data}!", "success")
         return redirect(url_for("userhome"))
 
     return render_template("register.html", title="Register", form=form)
 
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
     form = LoginForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        userobject = controller.get_user(username, password)
+        print(userobject)
+
+        return redirect(url_for("userhome"))
+
     return render_template("login.html", title="Login", form=form)
