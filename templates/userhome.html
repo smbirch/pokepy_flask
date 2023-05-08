@@ -1,50 +1,62 @@
 {% extends 'base.html' %} {% block content %}
 
-<div
-  class="container-fluid d-flex flex-column justify-content-center align-items-center"
-  style="height: 100vh"
->
-  <h1 class="text-center mt-5 welcome" style="margin-bottom: 5%">
-    This is the userhome!
-  </h1>
-  <div
-    class="row justify-content-center align-items-center"
-    style="height: 50vh; width: 100vw"
-  >
-    <div class="col-6">
-      <div class="card">
-        <div class="card-body text-center">
-          <form>
-            <div class="form-group">
-              <input
-                type="text"
-                class="form-control text-center mb-2"
-                placeholder="Username"
-              />
-            </div>
-            <div class="form-group">
-              <input
-                type="password"
-                class="form-control text-center mb-2"
-                placeholder="Password"
-              />
-            </div>
-            <div class="row justify-content-between align-items-center">
-              <div class="col">
-                <button type="submit" class="btn btn-primary">Sign In!</button>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-12">
+      <h1 class="text-left text-muted" style="margin-top: 10px">Pokepy</h1>
+    </div>
+  </div>
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="border rounded p-3">
+        <h2 class="text-center">User's Dex</h2>
+        <div class="row">
+          <div class="col-md-6">
+            <h3 class="text-center">Current Team</h3>
+            <div class="row">
+              <div class="col-12 mb-3">
+                <div class="border rounded p-2">Box 1</div>
+              </div>
+              <div class="col-12 mb-3">
+                <div class="border rounded p-2">Box 2</div>
+              </div>
+              <div class="col-12 mb-3">
+                <div class="border rounded p-2">Box 3</div>
+              </div>
+              <div class="col-12 mb-3">
+                <div class="border rounded p-2">Box 4</div>
+              </div>
+              <div class="col-12 mb-3">
+                <div class="border rounded p-2">Box 5</div>
+              </div>
+              <div class="col-12 mb-3">
+                <div class="border rounded p-2">Box 6</div>
               </div>
             </div>
-            <div class="row mt-3 flex-column">
-              <div class="col">
-                <a href="#" class="text-muted mb-2 links"
-                  >Forgot your password?</a
-                >
+          </div>
+          <div class="col-md-6">
+            <h3 class="text-center">Options</h3>
+            <div class="row">
+              <div class="col-12 mb-3">
+                <div class="border rounded p-2">Box 1</div>
               </div>
-              <div class="col">
-                <a href="#" class="text-muted links">Create an account here!</a>
+              <div class="col-12 mb-3">
+                <div class="border rounded p-2">Box 2</div>
+              </div>
+              <div class="col-12 mb-3">
+                <div class="border rounded p-2">Box 3</div>
+              </div>
+              <div class="col-12 mb-3">
+                <div class="border rounded p-2">Box 4</div>
+              </div>
+              <div class="col-12 mb-3">
+                <div class="border rounded p-2">Box 5</div>
+              </div>
+              <div class="col-12 mb-3">
+                <div class="border rounded p-2">Box 6</div>
               </div>
             </div>
-          </form>
+          </div>
         </div>
       </div>
     </div>
