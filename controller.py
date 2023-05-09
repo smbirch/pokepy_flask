@@ -114,7 +114,18 @@ def get_user(username, password):
 
     elif user == "401_unauthorized":
         print("Incorrect password!\nPlease try again")
-        restart_program()
+        # restart_program()
+        return "401"
+    else:
+        return user
+
+
+def get_user_session(username):
+    user = database.User.get_user_session(username)
+
+    if not user:
+        print("\nUser not found!")
+        return "404"
     else:
         return user
 

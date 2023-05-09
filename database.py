@@ -82,6 +82,21 @@ class User:
             else:
                 return userobject
 
+    # This method is used to pull users who are already authenticated
+    @staticmethod
+    def get_user_session(username):
+        with DBConnection() as db:
+            query = "SELECT * FROM users WHERE username = ?;"
+            db.execute_query(query, username)
+            userobject = None
+
+            for row in db.cursor:
+                userobject = User(*row)
+            if not userobject:
+                return None
+            else:
+                return userobject
+
     @staticmethod
     def get_all_users():
         users = []

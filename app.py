@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, flash, url_for
+from flask import Flask, render_template, request, redirect, flash, url_for, session
 
 import controller
 from forms import LoginForm, RegistrationForm
@@ -22,9 +22,11 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/userhome")
+@app.route("/userhome", methods=["GET", "POST"])
 def userhome():
-    return render_template("userhome.html")
+    username = session.get("usersession")
+    userobject = controller.get_user_session(username)
+    return render_template("userhome.html", userobject=userobject.username)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -38,13 +40,12 @@ def register():
 
         if userobject == "duplicateaccounterror":
             print("There is already a user with that username!")
-            print(userobject)
             flash(f"There is already a user with that username!", "success")
-
             return redirect(url_for("register"))
 
         flash(f"Account created for {form.username.data}!", "success")
-        return redirect(url_for("userhome"))
+        session["usersession"] = userobject.username
+        return redirect(url_for("userhome", userobject=userobject))
 
     return render_template("register.html", title="Register", form=form)
 
@@ -56,11 +57,22 @@ def login():
         username = form.username.data
         password = form.password.data
         userobject = controller.get_user(username, password)
-        print(userobject)
         if userobject == "404":
             flash(f"No account found for {form.username.data}")
             return redirect(url_for("login"))
 
-        return redirect(url_for("userhome"))
+        elif userobject == "401":
+            flash(f"Invalid username or password")
+            return redirect(url_for("login"))
+
+        session["usersession"] = userobject.username
+        print(f"***{form.username.data} has logged in***")
+        return redirect(url_for("userhome", userobject=userobject))
 
     return render_template("login.html", title="Login", form=form)
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect(url_for("index"))

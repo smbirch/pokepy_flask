@@ -23,7 +23,7 @@
         {% with messages = get_flashed_messages(with_categories=true) %}
           {% if messages %}
             {% for category, message in messages %}
-              <div class="alert alert-{{ category }}">{{ message }}</div>
+              <div class="alert alert-{{ category }}" id="flash-message">{{ message }}</div>
             {% endfor%}
           {% endif %}
         {% endwith %}
@@ -36,8 +36,20 @@
       ></script>
     </div>
     <footer class="footer">
-        <a class="links" href="https://github.com/smbirch/pokepy" target="_blank">Click here for to see my Github!</a>
+        <a class="links" href="https://github.com/smbirch/pokepy" target="_blank">Click here for to see my GitHub!</a>
       </footer>
       
   </body>
 </html>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var message = document.getElementById('flash-message');
+    if (message) {
+      setTimeout(function() {
+        message.classList.add('fade');
+      }, 3000); // time in milliseconds
+    }
+  });
+  </script>
+  
