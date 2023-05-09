@@ -1,12 +1,16 @@
 from flask import Flask, render_template, request, redirect, flash, url_for, session
+from forms import LoginForm, RegistrationForm
 
 import controller
-from forms import LoginForm, RegistrationForm
+import main
 
 
 app = Flask(__name__)
 
 app.config["SECRET_KEY"] = "temporarysecretkey"
+
+
+main.main()
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -26,7 +30,8 @@ def index():
 def userhome():
     username = session.get("usersession")
     userobject = controller.get_user_session(username)
-    return render_template("userhome.html", userobject=userobject.username)
+    userteam = controller.get_team(userobject)
+    return render_template("userhome.html", userobject=userobject, userteam=userteam)
 
 
 @app.route("/register", methods=["GET", "POST"])
