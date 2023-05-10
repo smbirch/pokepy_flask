@@ -6,7 +6,7 @@
 >
   <a a href="{{url_for('userhome')}}"
     ><h1
-      class="text-left text-muted links"
+      class="text-left text-muted links controlLinks"
       style="position: absolute; top: 0; left: 0; margin: 10px"
     >
       Pokepy
@@ -14,7 +14,7 @@
   >
   <a a href="{{url_for('logout')}}"
     ><h6
-      class="text-right text-muted links"
+      class="text-right text-muted links controlLinks"
       style="position: absolute; top: 0; right: 0; margin: 10px"
     >
       Logout
@@ -25,29 +25,29 @@
     <div class="row"></div>
     <div class="row justify-content-center">
       <div class="col-md-8">
-        <div class="border rounded p-3">
+        <div class="border rounded p-3 usercard">
           <h3 class="text-center">{{ userobject.username}}'s Dex</h3>
           <div class="row">
             <div class="col-md-6">
               <h4 class="text-center">Current Team</h4>
               <div class="row">
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">{{ userteam.mon1 }}</div>
+                  <div class="border rounded p-2">{{ teamobject.mon1 }}</div>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">{{ userteam.mon2 }}</div>
+                  <div class="border rounded p-2">{{ teamobject.mon2 }}</div>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">{{ userteam.mon3 }}</div>
+                  <div class="border rounded p-2">{{ teamobject.mon3 }}</div>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">{{ userteam.mon4 }}</div>
+                  <div class="border rounded p-2">{{ teamobject.mon4 }}</div>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">{{ userteam.mon5 }}</div>
+                  <div class="border rounded p-2">{{ teamobject.mon5 }}</div>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">{{ userteam.mon6 }}</div>
+                  <div class="border rounded p-2">{{ teamobject.mon6 }}</div>
                 </div>
               </div>
             </div>
@@ -55,22 +55,32 @@
               <h4 class="text-center">Options</h4>
               <div class="row">
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">Box 1</div>
+                  <div class="border rounded p-2">See one Pokemon</div>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">Box 2</div>
+                  <div class="border rounded p-2">See all Pokemon</div>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">Box 3</div>
+                  <div class="border rounded p-2">
+                    Add a Pokemon to your team
+                  </div>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">Box 4</div>
+                  <form method="POST" action="{{ url_for('random_team') }}">
+                    <button type="submit" class="border rounded p-2">
+                      Make a random team
+                    </button>
+                  </form>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">Box 5</div>
+                  <form method="POST" action="{{ url_for('delete_team') }}">
+                    <button type="submit" class="border rounded p-2">
+                      Delete my team
+                    </button>
+                  </form>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">Box 6</div>
+                  <div class="border rounded p-2">Delete my account</div>
                 </div>
               </div>
             </div>

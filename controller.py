@@ -120,6 +120,7 @@ def get_user(username, password):
         return user
 
 
+# This method is used to pull users who are already authenticated
 def get_user_session(username):
     user = database.User.get_user_session(username)
 

@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, flash, url_for, ses
 from forms import LoginForm, RegistrationForm
 
 import controller
+import database
 import main
 
 
@@ -28,10 +29,12 @@ def index():
 
 @app.route("/userhome", methods=["GET", "POST"])
 def userhome():
-    username = session.get("usersession")
+    username = session.get("username")
     userobject = controller.get_user_session(username)
-    userteam = controller.get_team(userobject)
-    return render_template("userhome.html", userobject=userobject, userteam=userteam)
+    teamobject = controller.get_team(userobject)
+    return render_template(
+        "userhome.html", userobject=userobject, teamobject=teamobject
+    )
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -44,12 +47,11 @@ def register():
         userobject = controller.create_user(username, password)
 
         if userobject == "duplicateaccounterror":
-            print("There is already a user with that username!")
             flash(f"There is already a user with that username!", "success")
             return redirect(url_for("register"))
 
         flash(f"Account created for {form.username.data}!", "success")
-        session["usersession"] = userobject.username
+        session["username"] = userobject.username
         return redirect(url_for("userhome", userobject=userobject))
 
     return render_template("register.html", title="Register", form=form)
@@ -70,9 +72,9 @@ def login():
             flash(f"Invalid username or password")
             return redirect(url_for("login"))
 
-        session["usersession"] = userobject.username
+        session["username"] = userobject.username
         print(f"***{form.username.data} has logged in***")
-        return redirect(url_for("userhome", userobject=userobject))
+        return redirect(url_for("userhome"))
 
     return render_template("login.html", title="Login", form=form)
 
@@ -81,3 +83,22 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for("index"))
+
+
+@app.route("/random_team", methods=["POST"])
+def random_team():
+    username = session.get("username")
+
+    userobject = controller.get_user_session(username)
+    teamobject = controller.get_team(userobject)
+    controller.make_random_team(teamobject)
+    return redirect(url_for("userhome", userobject=userobject))
+
+
+@app.route("/delete_team", methods=["POST"])
+def delete_team():
+    username = session.get("username")
+    userobject = controller.get_user_session(username)
+    teamobject = controller.get_team(userobject)
+    database.Team.delete_team(teamobject)
+    return redirect(url_for("userhome", userobject=userobject))

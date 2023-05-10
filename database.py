@@ -61,6 +61,14 @@ class User:
     def __str__(self):
         return self.username.capitalize()
 
+    def serialize(self):
+        return {
+            "userid": self.userid,
+            "username": self.username,
+            "password": self.password,
+            "date_created": self.date_created,
+        }
+
     @staticmethod
     def get_user(username, password):
         with DBConnection() as db:

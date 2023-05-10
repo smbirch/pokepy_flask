@@ -13,6 +13,10 @@ body {
   background-position: stretch;
 }
 
+.usercard {
+  background-color: #d4f3f1a2;
+}
+
 .welcome {
   color: #ffcb05;
   text-shadow: 2px 2px 2px #007bc3;
@@ -84,6 +88,10 @@ body {
   .btn {
     font-size: 0.5rem;
     padding: 8px 16px;
+  }
+
+  .controlLinks {
+    display: none;
   }
 }
 
