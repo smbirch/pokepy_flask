@@ -216,11 +216,21 @@ class Team:
         return f"1: {self.mon1}\n2: {self.mon2}\n3: {self.mon3}\n4: {self.mon4}\n5: {self.mon5}\n6: {self.mon6}"
 
     def delete_team(self):
+        teamsize = 0
+        for attr, _ in self.__dict__.items():
+            if attr == "teamid":
+                continue
+            elif attr != "None":
+                teamsize += 1
+        if teamsize == 0:
+            return "empty_team"
+
+        teamid = self.teamid
         rows = ["mon1", "mon2", "mon3", "mon4", "mon5", "mon6"]
         for mon in rows:
             with DBConnection() as db:
                 query = "UPDATE teams SET {0}='None' WHERE teamid='{1}';".format(
-                    mon, self.teamid
+                    mon, teamid
                 )
                 db.execute_query(query)
         # Updating current object with new empty team

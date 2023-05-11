@@ -29,12 +29,12 @@ def index():
 
 @app.route("/userhome", methods=["GET", "POST"])
 def userhome():
-    username = session.get("username")
-    userobject = controller.get_user_session(username)
-    teamobject = controller.get_team(userobject)
-    return render_template(
-        "userhome.html", userobject=userobject, teamobject=teamobject
-    )
+    userdata = session.get("userdata")
+
+    username = userdata.get("username")
+    userid = userdata.get("userid")
+    teamobject = userdata.get("teamobject")
+    return render_template("userhome.html", username=username, teamobject=teamobject)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -51,8 +51,8 @@ def register():
             return redirect(url_for("register"))
 
         flash(f"Account created for {form.username.data}!", "success")
-        session["username"] = userobject.username
-        return redirect(url_for("userhome", userobject=userobject))
+        set_userdata_session(username)
+        return redirect(url_for("userhome", username=username))
 
     return render_template("register.html", title="Register", form=form)
 
@@ -72,7 +72,7 @@ def login():
             flash(f"Invalid username or password")
             return redirect(url_for("login"))
 
-        session["username"] = userobject.username
+        set_userdata_session(username)
         print(f"***{form.username.data} has logged in***")
         return redirect(url_for("userhome"))
 
@@ -87,18 +87,42 @@ def logout():
 
 @app.route("/random_team", methods=["POST"])
 def random_team():
-    username = session.get("username")
+    userdata = session.get("userdata")
+    username = userdata.get("username")
+    userid = userdata.get("userid")
 
-    userobject = controller.get_user_session(username)
-    teamobject = controller.get_team(userobject)
+    teamobject = controller.get_team(userid)
     controller.make_random_team(teamobject)
-    return redirect(url_for("userhome", userobject=userobject))
+    set_userdata_session(username)
+    return redirect(url_for("userhome", username=username))
 
 
 @app.route("/delete_team", methods=["POST"])
 def delete_team():
-    username = session.get("username")
-    userobject = controller.get_user_session(username)
-    teamobject = controller.get_team(userobject)
+    userdata = session.get("userdata")
+    username = userdata.get("username")
+    userid = userdata.get("userid")
+
+    teamobject = controller.get_team(userid)
     database.Team.delete_team(teamobject)
-    return redirect(url_for("userhome", userobject=userobject))
+    set_userdata_session(username)
+    return redirect(url_for("userhome", username=username))
+
+
+def set_userdata_session(username):
+    userobject = controller.get_user_session(username)
+    teamobject = controller.get_team(userobject.userid)
+
+    userdata = {
+        "username": userobject.username,
+        "userid": userobject.userid,
+        "teamobject": {
+            "mon1": teamobject.mon1,
+            "mon2": teamobject.mon2,
+            "mon3": teamobject.mon3,
+            "mon4": teamobject.mon4,
+            "mon5": teamobject.mon5,
+            "mon6": teamobject.mon6,
+        },
+    }
+    session["userdata"] = userdata

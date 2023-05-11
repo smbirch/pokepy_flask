@@ -70,8 +70,8 @@ def get_single_mon(monname):
         return dbmon
 
 
-def get_team(userobject):
-    teamobject = database.Team.get_team(userobject.userid)
+def get_team(userid):
+    teamobject = database.Team.get_team(userid)
     return teamobject
 
 
