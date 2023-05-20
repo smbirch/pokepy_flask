@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, flash, url_for, session
-from forms import LoginForm, RegistrationForm
 
+from forms import LoginForm, RegistrationForm, DeleteAccountForm
 import controller
 import database
 import main
@@ -11,7 +11,10 @@ app = Flask(__name__)
 app.config["SECRET_KEY"] = "temporarysecretkey"
 
 
-main.main()
+print(
+    "\nStrong Pokémon, weak Pokémon, that is only the foolish perception of people. Truly skilled trainers should try to win with their favorites.\n"
+)
+database.create_db()
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -31,8 +34,10 @@ def index():
 def userhome():
     userdata = session.get("userdata")
 
+    if userdata == None:
+        return redirect(url_for("index"))
+
     username = userdata.get("username")
-    userid = userdata.get("userid")
     teamobject = userdata.get("teamobject")
     return render_template("userhome.html", username=username, teamobject=teamobject)
 
@@ -52,6 +57,8 @@ def register():
 
         flash(f"Account created for {form.username.data}!", "success")
         set_userdata_session(username)
+        print(f"\n***{form.username.data} has registered!***\n")
+
         return redirect(url_for("userhome", username=username))
 
     return render_template("register.html", title="Register", form=form)
@@ -73,7 +80,7 @@ def login():
             return redirect(url_for("login"))
 
         set_userdata_session(username)
-        print(f"***{form.username.data} has logged in***")
+        print(f"\n***{form.username.data} has logged in***\n")
         return redirect(url_for("userhome"))
 
     return render_template("login.html", title="Login", form=form)
@@ -126,3 +133,32 @@ def set_userdata_session(username):
         },
     }
     session["userdata"] = userdata
+
+
+@app.route("/delete_account", methods=["GET", "POST"])
+def delete_account():
+    form = DeleteAccountForm()
+
+    userdata = session.get("userdata")
+
+    if userdata == None:
+        return redirect(url_for("index"))
+
+    username = userdata.get("username")
+
+    if request.method == "POST":
+        if form.yes.data:
+            # Delete the user's account and log them out
+            if controller.delete_account(username) == "delete_error":
+                flash(f"There was an error deleting the account")
+                return redirect(url_for("userhome", username=username))
+            else:
+                session.clear()
+                flash(f"{username}'s account was deleted")
+
+                return redirect(url_for("index"))
+        elif form.no.data:
+            return redirect(url_for("userhome", username=username))
+
+    else:
+        return render_template("delete_account.html", form=form)

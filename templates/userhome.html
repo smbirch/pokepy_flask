@@ -61,9 +61,7 @@
                   <div class="border rounded p-2">See all Pokemon</div>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">
-                    Add a Pokemon to your team
-                  </div>
+                  <div class="border rounded p-2">Edit your team</div>
                 </div>
                 <div class="col-12 mb-3">
                   <form method="POST" action="{{ url_for('random_team') }}">
@@ -80,7 +78,13 @@
                   </form>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">Delete my account</div>
+                  <form method="GET" action="{{ url_for('delete_account') }}">
+                    <button type="submit" class="border rounded p-2">
+                      Delete my account
+                    </button>
+                  </form>
+                </div>
+                
                 </div>
               </div>
             </div>
@@ -89,5 +93,6 @@
       </div>
     </div>
   </div>
-  {% endblock %}
 </div>
+  {% endblock %}
+

@@ -36,3 +36,8 @@ class RegistrationForm(FlaskForm):
     )
 
     submit = SubmitField("Sign Up!")
+
+
+class DeleteAccountForm(FlaskForm):
+    yes = SubmitField("Yes!")
+    no = SubmitField("No, go back!")

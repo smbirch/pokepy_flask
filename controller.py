@@ -172,13 +172,12 @@ def learn_more():
     print()
 
 
-def delete_account(userobject):
+def delete_account(userid):
+    userobject = database.User.get_user_session(userid)
     if database.User.delete_account(userobject) == "Error deleting account":
-        controller.start_interface(userobject)
+        return "delete_error"
     else:
-        print("\n\nYour account has been deleted\n\n")
-        time.sleep(2)
-        restart_program()
+        print(f"\n***{userobject.username}'s account has been deleted***\n")
 
 
 # Passing this function for now to test web API
