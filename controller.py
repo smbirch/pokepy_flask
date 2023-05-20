@@ -58,11 +58,18 @@ def get_single_mon(monname):
 
         # extract data from json and store it in DB, then print for user
         data = response.json()
+
         montype = ""
         for attr in data["types"]:
             montype += attr["type"]["name"] + " "
+        sprite = data["sprites"]["front_default"]
         monobject = database.Pokemon(
-            data["id"], data["name"], data["height"], data["weight"], montype
+            data["id"],
+            data["name"],
+            data["height"],
+            data["weight"],
+            montype,
+            sprite,
         )
         monobject.add_mon_todb()
         return monobject

@@ -151,12 +151,13 @@ class User:
 
 
 class Pokemon:
-    def __init__(self, id, name, height, weight, montype):
+    def __init__(self, id, name, height, weight, montype, sprite):
         self.id = id
         self.name = name
         self.height = height
         self.weight = weight
         self.montype = montype
+        self.sprite = sprite
 
     def __str__(self):
         return f"ID: {self.id}\nName: {self.name.capitalize()}\nHeight: {self.height}\nWeight: {self.weight}\nType: {self.montype.title()}\n"
@@ -167,14 +168,15 @@ class Pokemon:
             return dbmon
         with DBConnection() as db:
             insert_with_params = """INSERT INTO mons(
-                    monid, name, height, weight, type)
-                    VALUES(?, ?, ?, ?, ?);"""
+                    monid, name, height, weight, type, sprite)
+                    VALUES(?, ?, ?, ?, ?, ?);"""
             mondata = (
                 self.id,
                 self.name.lower(),
                 self.height,
                 self.weight,
                 self.montype,
+                self.sprite,
             )
             db.execute_query(insert_with_params, *mondata)
 
@@ -322,7 +324,8 @@ def create_db():
             name TEXT,
             height INTEGER,
             weight INTEGER,
-            type TEXT);
+            type TEXT,
+            sprite TEXT);
             """
         db.execute_query(mons_table)
         print("mons table created")
