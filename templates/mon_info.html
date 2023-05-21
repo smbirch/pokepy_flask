@@ -1,0 +1,26 @@
+{% extends 'base.html' %} {% block content %}
+
+<div
+  class="container-fluid d-flex flex-column justify-content-center align-items-center"
+  style="height: 100vh"
+>
+  <h1 class="text-center mt-5 welcome" style="margin-bottom: 5%">text</h1>
+  <div
+    class="row justify-content-center align-items-center"
+    style="height: 50vh; width: 100vw"
+  >
+    <div class="col-6">
+      <div class="card my-card">
+        <div class="card-body text-center my-card">
+          <div class="form-group">
+            <fieldset class="form-group">
+              <div class="form-group mb-2">{{ mondata.monname }}</div>
+            </fieldset>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

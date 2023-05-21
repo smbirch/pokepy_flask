@@ -1,0 +1,61 @@
+{% extends 'base.html' %} {% block content %}
+<div
+  class="container-fluid d-flex flex-column justify-content-center align-items-center"
+  style="height: 100vh"
+>
+  <a a href="{{url_for('userhome')}}"
+    ><h1
+      class="text-left text-muted links controlLinks"
+      style="position: absolute; top: 0; left: 0; margin: 10px"
+    >
+      Pokepy
+    </h1></a
+  >
+  <a a href="{{url_for('logout')}}"
+    ><h6
+      class="text-right text-muted links controlLinks"
+      style="position: absolute; top: 0; right: 0; margin: 10px"
+    >
+      Logout
+    </h6></a
+  >
+
+  <div
+    class="container-fluid d-flex flex-column justify-content-center align-items-center"
+    style="height: 100vh"
+  >
+    <h1 class="text-center mt-5 welcome" style="margin-bottom: 5%">
+      Search for a Pokemon!
+    </h1>
+    <div
+      class="row justify-content-center align-items-center"
+      style="height: 50vh; width: 100vw"
+    >
+      <div class="col-6">
+        <div class="card my-card">
+          <div class="card-body text-center my-card">
+            <form method="POST" action="{{ url_for('get_mon')}}">
+              <div class="form-group">
+                {{ form.hidden_tag() }}
+                <fieldset class="form-group">
+                  <div class="form-group mb-2">
+                    {{ form.monname.label(class="form-control-label") }} {{
+                    form.monname(class="form-control") }}
+                  </div>
+                  <div
+                    class="row justify-content-between align-items-center mb-2"
+                  >
+                    <div class="col">
+                      {{ form.submit(class="btn btn-primary")}}
+                    </div>
+                  </div>
+                </fieldset>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

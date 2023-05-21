@@ -160,7 +160,7 @@ class Pokemon:
         self.sprite = sprite
 
     def __str__(self):
-        return f"ID: {self.id}\nName: {self.name.capitalize()}\nHeight: {self.height}\nWeight: {self.weight}\nType: {self.montype.title()}\n"
+        return f"\nID: {self.id}\nName: {self.name.capitalize()}\nHeight: {self.height}\nWeight: {self.weight}\nType: {self.montype.title()}\nSprite: {self.sprite}\n"
 
     # adds a single mon to database mons table
     def add_mon_todb(self):
@@ -207,7 +207,7 @@ class Team:
         self.mon6 = mon6
 
     def __str__(self):
-        return f"1: {self.mon1}\n2: {self.mon2}\n3: {self.mon3}\n4: {self.mon4}\n5: {self.mon5}\n6: {self.mon6}"
+        return f"\n1: {self.mon1}\n2: {self.mon2}\n3: {self.mon3}\n4: {self.mon4}\n5: {self.mon5}\n6: {self.mon6}"
 
     def delete_team(self):
         teamsize = 0

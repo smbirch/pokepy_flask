@@ -40,9 +40,6 @@ def get_all_mons():
 
 def get_single_mon(monname):
     monname = monname.lower()
-    if monname == "" or monname == " ":
-        print("Please check your spelling and try again.\n")
-        return
 
     dbmon = database.Pokemon.get_mon(monname)
     if not dbmon:
@@ -51,12 +48,12 @@ def get_single_mon(monname):
             response.raise_for_status()
 
         except requests.exceptions.HTTPError:
-            print("There was an error processing the request...")
+            print("\nThere was an error processing the request...")
             print("Please check your spelling and try again.\n")
             time.sleep(1)
             return
 
-        # extract data from json and store it in DB, then print for user
+        # extract data from json and store it in DB
         data = response.json()
 
         montype = ""

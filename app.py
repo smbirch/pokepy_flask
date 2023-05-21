@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, flash, url_for, session
 
-from forms import LoginForm, RegistrationForm, DeleteAccountForm
+import forms
 import controller
 import database
 import main
@@ -14,12 +14,13 @@ app.config["SECRET_KEY"] = "temporarysecretkey"
 print(
     "\nStrong Pokémon, weak Pokémon, that is only the foolish perception of people. Truly skilled trainers should try to win with their favorites.\n"
 )
+
 database.create_db()
 
 
 @app.route("/", methods=["GET", "POST"])
 def index():
-    form = LoginForm()
+    form = forms.LoginForm()
     if request.method == "POST":
         if form.validate_on_submit():
             flash("All fields are required")
@@ -44,7 +45,7 @@ def userhome():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    form = RegistrationForm()
+    form = forms.RegistrationForm()
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
@@ -66,7 +67,7 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    form = LoginForm()
+    form = forms.LoginForm()
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
@@ -116,29 +117,9 @@ def delete_team():
     return redirect(url_for("userhome", username=username))
 
 
-def set_userdata_session(username):
-    userobject = controller.get_user_session(username)
-    teamobject = controller.get_team(userobject.userid)
-
-    userdata = {
-        "username": userobject.username,
-        "userid": userobject.userid,
-        "teamobject": {
-            "mon1": teamobject.mon1,
-            "mon2": teamobject.mon2,
-            "mon3": teamobject.mon3,
-            "mon4": teamobject.mon4,
-            "mon5": teamobject.mon5,
-            "mon6": teamobject.mon6,
-        },
-    }
-    session["userdata"] = userdata
-
-
 @app.route("/delete_account", methods=["GET", "POST"])
 def delete_account():
-    form = DeleteAccountForm()
-
+    form = forms.DeleteAccountForm()
     userdata = session.get("userdata")
 
     if userdata == None:
@@ -162,3 +143,69 @@ def delete_account():
 
     else:
         return render_template("delete_account.html", form=form)
+
+
+@app.route("/get_mon", methods=["GET", "POST"])
+def get_mon():
+    form = forms.GetMonForm()
+    userdata = session.get("userdata")
+
+    if userdata == None:
+        return redirect(url_for("index"))
+
+    if form.validate_on_submit():
+        monname = form.monname.data
+        set_mondata_session(monname)
+
+        # add error handling code here later
+        return redirect(url_for("mon_info"))
+
+    return render_template("get_mon.html", form=form)
+
+
+@app.route("/mon_info")
+def mon_info():
+    monname = request.args.get("monname")
+    userdata = session.get("userdata")
+
+    if userdata == None:
+        return redirect(url_for("index"))
+
+    mondata = session.get("mondata")
+    # monname = mondata.get("monname")
+
+    return render_template("mon_info.html", mondata=mondata)
+
+
+def set_userdata_session(username):
+    userobject = controller.get_user_session(username)
+    teamobject = controller.get_team(userobject.userid)
+
+    userdata = {
+        "username": userobject.username,
+        "userid": userobject.userid,
+        "teamobject": {
+            "mon1": teamobject.mon1,
+            "mon2": teamobject.mon2,
+            "mon3": teamobject.mon3,
+            "mon4": teamobject.mon4,
+            "mon5": teamobject.mon5,
+            "mon6": teamobject.mon6,
+        },
+    }
+    session["userdata"] = userdata
+
+
+def set_mondata_session(monname):
+    monobject = controller.get_single_mon(monname)
+
+    mondata = {
+        "monid": monobject.id,
+        "monname": monobject.name,
+        "height": monobject.height,
+        "weight": monobject.weight,
+        "type": monobject.montype,
+        "sprite": monobject.sprite,
+    }
+
+    session["mondata"] = mondata

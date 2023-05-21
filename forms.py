@@ -41,3 +41,8 @@ class RegistrationForm(FlaskForm):
 class DeleteAccountForm(FlaskForm):
     yes = SubmitField("Yes!")
     no = SubmitField("No, go back!")
+
+
+class GetMonForm(FlaskForm):
+    monname = StringField("Pokemon Name", validators=[DataRequired()])
+    submit = SubmitField("Search!")

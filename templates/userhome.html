@@ -55,7 +55,11 @@
               <h4 class="text-center">Options</h4>
               <div class="row">
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">See one Pokemon</div>
+                  <form method="GET" action="{{ url_for('get_mon') }}">
+                    <button type="submit" class="border rounded p-2">
+                      See one Pokemon
+                    </button>
+                  </form>
                 </div>
                 <div class="col-12 mb-3">
                   <div class="border rounded p-2">See all Pokemon</div>
