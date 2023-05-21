@@ -4,23 +4,50 @@
   class="container-fluid d-flex flex-column justify-content-center align-items-center"
   style="height: 100vh"
 >
-  <h1 class="text-center mt-5 welcome" style="margin-bottom: 5%">text</h1>
+  <a a href="{{url_for('userhome')}}"
+    ><h1
+      class="text-left text-muted links controlLinks"
+      style="position: absolute; top: 0; left: 0; margin: 10px"
+    >
+      Pokepy
+    </h1></a
+  >
+  <a a href="{{url_for('logout')}}"
+    ><h6
+      class="text-right text-muted links controlLinks"
+      style="position: absolute; top: 0; right: 0; margin: 10px"
+    >
+      Logout
+    </h6></a
+  >
+
+  <h1 class="text-center mt-5 welcome">{{ mondata.monname.title() }}</h1>
   <div
     class="row justify-content-center align-items-center"
-    style="height: 50vh; width: 100vw"
+    style="height: 50vh; width: 80vw"
   >
-    <div class="col-6">
-      <div class="card my-card">
-        <div class="card-body text-center my-card">
-          <div class="form-group">
-            <fieldset class="form-group">
-              <div class="form-group mb-2">{{ mondata.monname }}</div>
-            </fieldset>
-          </div>
-        </div>
-      </div>
+    <div class="col-6" style="width: 50%">
+      <img
+        src="{{ mondata.sprite }}"
+        alt="Sprite"
+        style="width: 100%; height: auto"
+      />
+
+      <!-- First flexbox content here -->
+    </div>
+    <div class="col-6" style="width: 50%">
+      <!-- Second flexbox content here -->
+      <p>ID: {{ mondata.monid }}</p>
+      <p>Height: {{ mondata.height }}</p>
+      <p>Weight: {{ mondata.weight }}</p>
+      <p>Type: {{ mondata.type.title() }}</p>
+    </div>
+    <div class="d-flex justify-content-center align-items-center">
+      <a href="{{ url_for('get_mon')}}" class="btn btn-primary"
+        >Check out another Pokemon!</a
+      >
     </div>
   </div>
-</div>
 
-{% endblock %}
+  {% endblock %}
+</div>
