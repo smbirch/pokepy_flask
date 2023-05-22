@@ -158,6 +158,10 @@ def get_mon():
 
     if form.validate_on_submit():
         monname = form.monname.data
+        if monname == "None":
+            print("test")
+            return redirect(url_for("userhome"))
+
         if set_mondata_session(monname) == "mon_not_found":
             flash(f"Could not find {monname}. Check your spelling and try again")
             return redirect(url_for("get_mon", form=form))

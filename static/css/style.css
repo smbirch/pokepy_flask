@@ -49,11 +49,11 @@ body {
 
 .colors:hover {
   color: #ffcb05 !important;
-  border-color: #ffcb05 !important;
+  border-color: #007bc3 !important;
 }
 
 .colors:active {
-  color: #4cb050 !important;
+  color: #007bc3 !important;
   border-color: #ffcb05 !important;
 }
 
