@@ -50,8 +50,7 @@ def get_single_mon(monname):
         except requests.exceptions.HTTPError:
             print("\nThere was an error processing the request...")
             print("Please check your spelling and try again.\n")
-            time.sleep(1)
-            return
+            return None
 
         # extract data from json and store it in DB
         data = response.json()

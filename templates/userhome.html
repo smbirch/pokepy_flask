@@ -6,7 +6,7 @@
 >
   <a a href="{{url_for('userhome')}}"
     ><h1
-      class="text-left text-muted links controlLinks"
+      class="text-left text-muted links controlLinks colors"
       style="position: absolute; top: 0; left: 0; margin: 10px"
     >
       Pokepy
@@ -14,7 +14,7 @@
   >
   <a a href="{{url_for('logout')}}"
     ><h6
-      class="text-right text-muted links controlLinks"
+      class="text-right text-muted links controlLinks colors"
       style="position: absolute; top: 0; right: 0; margin: 10px"
     >
       Logout
@@ -32,22 +32,100 @@
               <h4 class="text-center">Current Team</h4>
               <div class="row">
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">{{ teamobject.mon1 }}</div>
+                  <form method="POST" action="{{ url_for('get_mon') }}">
+                    {{ form.hidden_tag() }}
+                    <input
+                      type="hidden"
+                      name="monname"
+                      value="{{ teamobject.mon1 }}"
+                    />
+                    <button
+                      type="submit"
+                      class="border rounded p-2 userhome-btn"
+                    >
+                      {{ teamobject.mon1 }}
+                    </button>
+                  </form>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">{{ teamobject.mon2 }}</div>
+                  <form method="POST" action="{{ url_for('get_mon') }}">
+                    {{ form.hidden_tag() }}
+                    <input
+                      type="hidden"
+                      name="monname"
+                      value="{{ teamobject.mon2 }}"
+                    />
+                    <button
+                      type="submit"
+                      class="border rounded p-2 userhome-btn"
+                    >
+                      {{ teamobject.mon2 }}
+                    </button>
+                  </form>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">{{ teamobject.mon3 }}</div>
+                  <form method="POST" action="{{ url_for('get_mon') }}">
+                    {{ form.hidden_tag() }}
+                    <input
+                      type="hidden"
+                      name="monname"
+                      value="{{ teamobject.mon3 }}"
+                    />
+                    <button
+                      type="submit"
+                      class="border rounded p-2 userhome-btn"
+                    >
+                      {{ teamobject.mon3 }}
+                    </button>
+                  </form>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">{{ teamobject.mon4 }}</div>
+                  <form method="POST" action="{{ url_for('get_mon') }}">
+                    {{ form.hidden_tag() }}
+                    <input
+                      type="hidden"
+                      name="monname"
+                      value="{{ teamobject.mon4 }}"
+                    />
+                    <button
+                      type="submit"
+                      class="border rounded p-2 userhome-btn"
+                    >
+                      {{ teamobject.mon4 }}
+                    </button>
+                  </form>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">{{ teamobject.mon5 }}</div>
+                  <form method="POST" action="{{ url_for('get_mon') }}">
+                    {{ form.hidden_tag() }}
+                    <input
+                      type="hidden"
+                      name="monname"
+                      value="{{ teamobject.mon5 }}"
+                    />
+                    <button
+                      type="submit"
+                      class="border rounded p-2 userhome-btn"
+                    >
+                      {{ teamobject.mon5 }}
+                    </button>
+                  </form>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">{{ teamobject.mon6 }}</div>
+                  <form method="POST" action="{{ url_for('get_mon') }}">
+                    {{ form.hidden_tag() }}
+                    <input
+                      type="hidden"
+                      name="monname"
+                      value="{{ teamobject.mon6 }}"
+                    />
+                    <button
+                      type="submit"
+                      class="border rounded p-2 userhome-btn"
+                    >
+                      {{ teamobject.mon6 }}
+                    </button>
+                  </form>
                 </div>
               </div>
             </div>
@@ -56,39 +134,63 @@
               <div class="row">
                 <div class="col-12 mb-3">
                   <form method="GET" action="{{ url_for('get_mon') }}">
-                    <button type="submit" class="border rounded p-2">
+                    <button
+                      type="submit"
+                      class="border rounded p-2 userhome-btn"
+                    >
                       See one Pokemon
                     </button>
                   </form>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">See all Pokemon</div>
+                  <form method="GET" action="{{ url_for('userhome') }}">
+                    <button
+                      type="submit"
+                      class="border rounded p-2 userhome-btn"
+                    >
+                      See all Pokemon
+                    </button>
+                  </form>
                 </div>
                 <div class="col-12 mb-3">
-                  <div class="border rounded p-2">Edit your team</div>
+                  <form method="GET" action="{{ url_for('userhome') }}">
+                    <button
+                      type="submit"
+                      class="border rounded p-2 userhome-btn"
+                    >
+                      Edit your team
+                    </button>
+                  </form>
                 </div>
                 <div class="col-12 mb-3">
                   <form method="POST" action="{{ url_for('random_team') }}">
-                    <button type="submit" class="border rounded p-2">
+                    <button
+                      type="submit"
+                      class="border rounded p-2 userhome-btn"
+                    >
                       Make a random team
                     </button>
                   </form>
                 </div>
                 <div class="col-12 mb-3">
                   <form method="POST" action="{{ url_for('delete_team') }}">
-                    <button type="submit" class="border rounded p-2">
+                    <button
+                      type="submit"
+                      class="border rounded p-2 userhome-btn"
+                    >
                       Delete my team
                     </button>
                   </form>
                 </div>
                 <div class="col-12 mb-3">
                   <form method="GET" action="{{ url_for('delete_account') }}">
-                    <button type="submit" class="border rounded p-2">
+                    <button
+                      type="submit"
+                      class="border rounded p-2 userhome-btn"
+                    >
                       Delete my account
                     </button>
                   </form>
-                </div>
-                
                 </div>
               </div>
             </div>
@@ -98,5 +200,4 @@
     </div>
   </div>
 </div>
-  {% endblock %}
-
+{% endblock %}

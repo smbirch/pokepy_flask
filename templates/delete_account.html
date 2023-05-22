@@ -6,7 +6,7 @@
 >
   <a a href="{{url_for('userhome')}}"
     ><h1
-      class="text-left text-muted links controlLinks"
+      class="text-left text-muted links controlLinks colors"
       style="position: absolute; top: 0; left: 0; margin: 10px"
     >
       Pokepy
@@ -14,7 +14,7 @@
   >
   <a a href="{{url_for('logout')}}"
     ><h6
-      class="text-right text-muted links controlLinks"
+      class="text-right text-muted links controlLinks colors"
       style="position: absolute; top: 0; right: 0; margin: 10px"
     >
       Logout
@@ -31,6 +31,7 @@
           <form method="POST" action="">
             <div class="form-group">
               {{ form.hidden_tag() }}
+              <p>Are you sure you want to delete your account?</p>
               <fieldset class="form-group">
                 <div class="form-group mb-2">
                   {{ form.yes(class="form-control btn btn-primary") }}

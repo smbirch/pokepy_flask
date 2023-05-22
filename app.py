@@ -33,6 +33,7 @@ def index():
 
 @app.route("/userhome", methods=["GET", "POST"])
 def userhome():
+    form = forms.GetMonForm()
     userdata = session.get("userdata")
 
     if userdata == None:
@@ -40,7 +41,9 @@ def userhome():
 
     username = userdata.get("username")
     teamobject = userdata.get("teamobject")
-    return render_template("userhome.html", username=username, teamobject=teamobject)
+    return render_template(
+        "userhome.html", username=username, teamobject=teamobject, form=form
+    )
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -155,9 +158,10 @@ def get_mon():
 
     if form.validate_on_submit():
         monname = form.monname.data
-        set_mondata_session(monname)
+        if set_mondata_session(monname) == "mon_not_found":
+            flash(f"Could not find {monname}. Check your spelling and try again")
+            return redirect(url_for("get_mon", form=form))
 
-        # add error handling code here later
         return redirect(url_for("mon_info"))
 
     return render_template("get_mon.html", form=form)
@@ -165,14 +169,12 @@ def get_mon():
 
 @app.route("/mon_info")
 def mon_info():
-    monname = request.args.get("monname")
     userdata = session.get("userdata")
 
     if userdata == None:
         return redirect(url_for("index"))
 
     mondata = session.get("mondata")
-    # monname = mondata.get("monname")
 
     return render_template("mon_info.html", mondata=mondata)
 
@@ -198,6 +200,8 @@ def set_userdata_session(username):
 
 def set_mondata_session(monname):
     monobject = controller.get_single_mon(monname)
+    if monobject == None:
+        return "mon_not_found"
 
     mondata = {
         "monid": monobject.id,

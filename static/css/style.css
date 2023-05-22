@@ -42,6 +42,25 @@ body {
   border-color: #ffcb05 !important;
 }
 
+.colors {
+  color: #007bc3;
+  border-color: #ffcb05;
+}
+
+.colors:hover {
+  color: #ffcb05 !important;
+  border-color: #ffcb05 !important;
+}
+
+.colors:active {
+  color: #4cb050 !important;
+  border-color: #ffcb05 !important;
+}
+
+.userhome-btn {
+  width: 85%;
+}
+
 .fade-in-text {
   animation: fadeIn 5s;
   pointer-events: auto;
