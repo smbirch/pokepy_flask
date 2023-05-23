@@ -2,12 +2,10 @@ import requests
 import time
 import sys
 import random
-import threading
 
 import database
 
 allmons = []
-allmons_lock = threading.Lock()
 
 
 def get_all_mons():
@@ -24,9 +22,9 @@ def get_all_mons():
             print("restarting")
 
         data = response.json()
-        with allmons_lock:
-            for item in data["results"]:
-                allmons.append(item["name"])
+
+        for item in data["results"]:
+            allmons.append(item["name"])
 
     return allmons
 
@@ -73,11 +71,17 @@ def get_team(userid):
 
 def make_random_team(teamobject):
     database.Team.delete_team(teamobject)
+    global allmons
+    if len(allmons) == 0:
+        allmons = get_all_mons()
 
-    allmonslist = get_all_mons()
-    random.shuffle(allmonslist)
+    shuffled_mons = []
+    for mon in allmons:
+        shuffled_mons.append(mon)
+    random.shuffle(shuffled_mons)
+
     for _ in range(6):
-        randmon = allmonslist.pop()
+        randmon = shuffled_mons.pop()
         monobject = get_single_mon(randmon)
         teamobject = database.Team.add_mon_to_team(teamobject, monobject)
     return teamobject
