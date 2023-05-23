@@ -2,12 +2,12 @@ import requests
 import time
 import sys
 import random
-import os
+import threading
 
 import database
-import controller
 
 allmons = []
+allmons_lock = threading.Lock()
 
 
 def get_all_mons():
@@ -22,18 +22,11 @@ def get_all_mons():
         except requests.exceptions.HTTPError:
             print("There was an error processing the request...\n")
             print("restarting")
-            ellipsis = "..."
-            time.sleep(0.5)
-            for item in ellipsis:
-                print(item, end=" ")
-                sys.stdout.flush()
-                time.sleep(0.4)
-            print()
-            restart_program()
 
         data = response.json()
-        for item in data["results"]:
-            allmons.append(item["name"])
+        with allmons_lock:
+            for item in data["results"]:
+                allmons.append(item["name"])
 
     return allmons
 
