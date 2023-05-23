@@ -1,0 +1,55 @@
+{% extends 'base.html' %} {% block content %}
+<div
+  class="container-fluid d-flex flex-column justify-content-center align-items-center"
+  style="height: 100vh"
+>
+  <a href="{{url_for('userhome')}}">
+    <h1
+      class="text-left text-muted links controlLinks colors"
+      style="position: absolute; top: 0; left: 0; margin: 10px"
+    >
+      Pokepy
+    </h1>
+  </a>
+  <a href="{{url_for('logout')}}">
+    <h6
+      class="text-right text-muted links controlLinks colors"
+      style="position: absolute; top: 0; right: 0; margin: 10px"
+    >
+      Logout
+    </h6>
+  </a>
+
+  <div class="container-fluid" style="height: 80vh">
+    <div class="row"></div>
+    <div class="row justify-content-center" style="height: 100%">
+      <div class="col-md-8">
+        <div class="border rounded p-3 usercard" style="height: 100%">
+          <h3 class="text-center">Gotta catch 'em all!</h3>
+          <div class="scroll-container" style="height: 100%">
+            <ul class="list-inline d-flex flex-wrap justify-content-center">
+              {% for mon in monslist %}
+              <li class="list-inline-item">
+                <form method="POST" action="{{ url_for('get_mon') }}">
+                  {{ form.hidden_tag() }}
+                  <input type="hidden" name="monname" value="{{ mon }}" />
+                  <button
+                    type="submit"
+                    class="border rounded p-2 btn-grid-item allmons-btn"
+                  >
+                    {{ mon.title() }}
+                  </button>
+                </form>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-center align-items-center">
+    <a href="{{ url_for('userhome')}}" class="btn btn-primary mt-2">Go Home</a>
+  </div>
+</div>
+{% endblock %}

@@ -183,6 +183,19 @@ def mon_info():
     return render_template("mon_info.html", mondata=mondata)
 
 
+@app.route("/all_mons")
+def all_mons():
+    userdata = session.get("userdata")
+
+    if userdata == None:
+        return redirect(url_for("index"))
+
+    form = forms.GetMonForm()
+
+    monslist = controller.get_all_mons()
+    return render_template("all_mons.html", monslist=monslist, form=form)
+
+
 def set_userdata_session(username):
     userobject = controller.get_user_session(username)
     teamobject = controller.get_team(userobject.userid)
