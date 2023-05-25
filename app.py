@@ -18,6 +18,42 @@ print(
 database.create_db()
 
 
+def set_userdata_session(username):
+    userobject = controller.get_user_session(username)
+    teamobject = controller.get_team(userobject.userid)
+
+    userdata = {
+        "username": userobject.username,
+        "userid": userobject.userid,
+        "teamobject": {
+            "mon1": teamobject.mon1,
+            "mon2": teamobject.mon2,
+            "mon3": teamobject.mon3,
+            "mon4": teamobject.mon4,
+            "mon5": teamobject.mon5,
+            "mon6": teamobject.mon6,
+        },
+    }
+    session["userdata"] = userdata
+
+
+def set_mondata_session(monname):
+    monobject = controller.get_single_mon(monname)
+    if monobject == None:
+        return "mon_not_found"
+
+    mondata = {
+        "monid": monobject.id,
+        "monname": monobject.name,
+        "height": monobject.height,
+        "weight": monobject.weight,
+        "type": monobject.montype,
+        "sprite": monobject.sprite,
+    }
+
+    session["mondata"] = mondata
+
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     form = forms.LoginForm()
@@ -196,37 +232,15 @@ def all_mons():
     return render_template("all_mons.html", monslist=monslist, form=form)
 
 
-def set_userdata_session(username):
-    userobject = controller.get_user_session(username)
-    teamobject = controller.get_team(userobject.userid)
+@app.route("/edit_team")
+def edit_team():
+    form = forms.GetMonForm()
+    userdata = session.get("userdata")
+    if userdata == None:
+        return redirect(url_for("index"))
 
-    userdata = {
-        "username": userobject.username,
-        "userid": userobject.userid,
-        "teamobject": {
-            "mon1": teamobject.mon1,
-            "mon2": teamobject.mon2,
-            "mon3": teamobject.mon3,
-            "mon4": teamobject.mon4,
-            "mon5": teamobject.mon5,
-            "mon6": teamobject.mon6,
-        },
-    }
-    session["userdata"] = userdata
-
-
-def set_mondata_session(monname):
-    monobject = controller.get_single_mon(monname)
-    if monobject == None:
-        return "mon_not_found"
-
-    mondata = {
-        "monid": monobject.id,
-        "monname": monobject.name,
-        "height": monobject.height,
-        "weight": monobject.weight,
-        "type": monobject.montype,
-        "sprite": monobject.sprite,
-    }
-
-    session["mondata"] = mondata
+    username = userdata.get("username")
+    teamobject = userdata.get("teamobject")
+    return render_template(
+        "edit_team.html", username=username, teamobject=teamobject, form=form
+    )
