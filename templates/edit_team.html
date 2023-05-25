@@ -32,15 +32,20 @@
               <h4 class="text-center">Current Team</h4>
               <div class="row">
                 <div class="col-12 mb-3">
-                  <button
-                    type="button"
-                    class="border rounded p-2 userhome-btn"
-                    data-toggle="modal"
-                    data-target="#getMonModal"
-                    data-remote="{{ url_for('get_mon', monname=teamobject.mon1) }}"
-                  >
-                    {{ teamobject.mon1.title() }}
-                  </button>
+                  <form method="POST" action="{{ url_for('get_mon') }}">
+                    {{ form.hidden_tag() }}
+                    <input
+                      type="hidden"
+                      name="monname"
+                      value="{{ teamobject.mon1 }}"
+                    />
+                    <button
+                      type="submit"
+                      class="border rounded p-2 userhome-btn"
+                    >
+                      {{ teamobject.mon1.title() }}
+                    </button>
+                  </form>
                 </div>
                 <div class="col-12 mb-3">
                   <form method="POST" action="{{ url_for('get_mon') }}">
