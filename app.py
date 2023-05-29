@@ -257,6 +257,7 @@ def edit_team():
 
 @app.route("/remove_pokemon", methods=["POST"])
 def remove_pokemon():
+    print("\ntesting\n")
     userdata = session.get("userdata")
     if userdata == None:
         return redirect(url_for("index"))

@@ -35,90 +35,67 @@
           <div class="row">
             <div class="col-md-6">
               <h4 class="text-center">Current Team</h4>
+              {{ form.hidden_tag() }}
               <div class="row">
                 <div class="col-12 mb-3">
-                  <form method="POST" action="{{ url_for('get_mon') }}">
-                    {{ form.hidden_tag() }}
-                    <input
-                      type="hidden"
-                      name="monname"
-                      value="{{ teamobject.mon1 }}"
-                    />
-                    <input type="hidden" name="pokemon_pos" value="0" />
-                    <button type="submit" class="border rounded p-2 pokebutton">
-                      {{ teamobject.mon1.title() }}
-                    </button>
-                  </form>
+                  <input type="hidden" name="pokemon_pos" value="0" />
+                  <button
+                    type="button"
+                    class="border rounded p-2 pokebutton mon-button"
+                    data-monname="{{ teamobject.mon1 }}"
+                  >
+                    {{ teamobject.mon1.title() }}
+                  </button>
                 </div>
                 <div class="col-12 mb-3">
-                  <form method="POST" action="{{ url_for('get_mon') }}">
-                    {{ form.hidden_tag() }}
-                    <input
-                      type="hidden"
-                      name="monname"
-                      value="{{ teamobject.mon2 }}"
-                    />
-                    <input type="hidden" name="pokemon_pos" value="1" />
-                    <button type="submit" class="border rounded p-2 pokebutton">
-                      {{ teamobject.mon2.title() }}
-                    </button>
-                  </form>
+                  <input type="hidden" name="pokemon_pos" value="1" />
+                  <button
+                    type="button"
+                    class="border rounded p-2 pokebutton mon-button"
+                    data-monname="{{ teamobject.mon2 }}"
+                  >
+                    {{ teamobject.mon2.title() }}
+                  </button>
                 </div>
                 <div class="col-12 mb-3">
-                  <form method="POST" action="{{ url_for('get_mon') }}">
-                    {{ form.hidden_tag() }}
-                    <input
-                      type="hidden"
-                      name="monname"
-                      value="{{ teamobject.mon3 }}"
-                    />
-                    <input type="hidden" name="pokemon_pos" value="2" />
-                    <button type="submit" class="border rounded p-2 pokebutton">
-                      {{ teamobject.mon3.title() }}
-                    </button>
-                  </form>
+                  <input type="hidden" name="pokemon_pos" value="2" />
+                  <button
+                    type="button"
+                    class="border rounded p-2 pokebutton mon-button"
+                    data-monname="{{ teamobject.mon3 }}"
+                  >
+                    {{ teamobject.mon3.title() }}
+                  </button>
                 </div>
                 <div class="col-12 mb-3">
-                  <form method="POST" action="{{ url_for('get_mon') }}">
-                    {{ form.hidden_tag() }}
-                    <input
-                      type="hidden"
-                      name="monname"
-                      value="{{ teamobject.mon4 }}"
-                    />
-                    <input type="hidden" name="pokemon_pos" value="3" />
-                    <button type="submit" class="border rounded p-2 pokebutton">
-                      {{ teamobject.mon4.title() }}
-                    </button>
-                  </form>
+                  <input type="hidden" name="pokemon_pos" value="3" />
+                  <button
+                    type="button"
+                    class="border rounded p-2 pokebutton mon-button"
+                    data-monname="{{ teamobject.mon4 }}"
+                  >
+                    {{ teamobject.mon4.title() }}
+                  </button>
                 </div>
                 <div class="col-12 mb-3">
-                  <form method="POST" action="{{ url_for('get_mon') }}">
-                    {{ form.hidden_tag() }}
-                    <input
-                      type="hidden"
-                      name="monname"
-                      value="{{ teamobject.mon5 }}"
-                    />
-                    <input type="hidden" name="pokemon_pos" value="4" />
-                    <button type="submit" class="border rounded p-2 pokebutton">
-                      {{ teamobject.mon5.title() }}
-                    </button>
-                  </form>
+                  <input type="hidden" name="pokemon_pos" value="4" />
+                  <button
+                    type="button"
+                    class="border rounded p-2 pokebutton mon-button"
+                    data-monname="{{ teamobject.mon5 }}"
+                  >
+                    {{ teamobject.mon5.title() }}
+                  </button>
                 </div>
                 <div class="col-12 mb-3">
-                  <form method="POST" action="{{ url_for('get_mon') }}">
-                    {{ form.hidden_tag() }}
-                    <input
-                      type="hidden"
-                      name="monname"
-                      value="{{ teamobject.mon6 }}"
-                    />
-                    <input type="hidden" name="pokemon_pos" value="5" />
-                    <button type="submit" class="border rounded p-2 pokebutton">
-                      {{ teamobject.mon6.title() }}
-                    </button>
-                  </form>
+                  <input type="hidden" name="pokemon_pos" value="5" />
+                  <button
+                    type="button"
+                    class="border rounded p-2 pokebutton mon-button"
+                    data-monname="{{ teamobject.mon6 }}"
+                  >
+                    {{ teamobject.mon6.title() }}
+                  </button>
                 </div>
               </div>
             </div>
@@ -197,6 +174,7 @@
   let selectedPokemonId = null;
 
   function removePokemon() {
+    console.log('testing')
     if (selectedPokemonId) {
       const form = document.createElement('form');
       form.method = 'POST';
