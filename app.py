@@ -162,7 +162,7 @@ def delete_team():
     teamobject = controller.get_team(userid)
     database.Team.delete_team(teamobject)
     set_userdata_session(username)
-    return redirect(url_for("userhome", username=username))
+    return redirect(request.referrer)
 
 
 @app.route("/delete_account", methods=["GET", "POST"])
