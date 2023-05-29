@@ -113,14 +113,14 @@
                   </form>
                 </div>
                 <div class="col-12 mb-3">
-                  <form method="GET" action="{{ url_for('get_mon') }}">
-                    <button
-                      type="submit"
-                      class="border rounded p-2 userhome-btn"
-                    >
-                      See one Pokemon
-                    </button>
-                  </form>
+                  <input type="hidden" name="monname" value="" />
+                  <button
+                    type="submit"
+                    class="border rounded p-2 userhome-btn"
+                    id="see-one-pokemon-button"
+                  >
+                    See one Pokemon
+                  </button>
                 </div>
                 <div class="col-12 mb-3">
                   <button
@@ -131,6 +131,7 @@
                     Remove a Pokemon
                   </button>
                 </div>
+
                 <div class="col-12 mb-3">
                   <form method="POST" action="{{ url_for('random_team') }}">
                     <button
@@ -170,51 +171,100 @@
   </div>
 </div>
 <script>
-  // Store the clicked Pokemon's identifier
-  let selectedPokemonId = null;
+    let selectedPokemonId = null;
+    let selectedPokemonName = null;
 
-  function removePokemon() {
-    console.log('testing')
-    if (selectedPokemonId) {
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = '{{ url_for('remove_pokemon') }}';
+    function removePokemon() {
+      if (selectedPokemonId) {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ url_for('remove_pokemon') }}';
 
-      const csrfToken = document.getElementsByName('csrf_token')[0].value;
-      const csrfInput = document.createElement('input');
-      csrfInput.type = 'hidden';
-      csrfInput.name = 'csrf_token';
-      csrfInput.value = csrfToken;
+        const csrfToken = document.getElementsByName('csrf_token')[0].value;
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrf_token';
+        csrfInput.value = csrfToken;
 
-      const pokemonIdInput = document.createElement('input');
-      pokemonIdInput.type = 'hidden';
-      pokemonIdInput.name = 'pokemon_pos';
-      pokemonIdInput.value = selectedPokemonId;
+        const pokemonIdInput = document.createElement('input');
+        pokemonIdInput.type = 'hidden';
+        pokemonIdInput.name = 'pokemon_pos';
+        pokemonIdInput.value = selectedPokemonId;
 
-      form.appendChild(csrfInput);
-      form.appendChild(pokemonIdInput);
+        form.appendChild(csrfInput);
+        form.appendChild(pokemonIdInput);
 
-      document.body.appendChild(form);
-      form.submit();
+        document.body.appendChild(form);
+        form.submit();
+      }
     }
-  }
 
-  // Event listener for Pokemon buttons
-  const pokemonButtons = document.querySelectorAll('button.pokebutton');
+    function seeOnePokemon() {
+      if (selectedPokemonName == "None" || selectedPokemonName == "none") {
+        return
+      }
+      if (selectedPokemonName !== null) {
+
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{{ url_for('get_mon') }}';
+
+        const csrfToken = document.getElementsByName('csrf_token')[0].value;
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrf_token';
+        csrfInput.value = csrfToken;
+
+        const pokemonNameInput = document.createElement('input');
+        pokemonNameInput.type = 'hidden';
+        pokemonNameInput.name = 'monname';
+        pokemonNameInput.value = selectedPokemonName;
+
+        form.appendChild(csrfInput);
+        form.appendChild(pokemonNameInput);
+
+        document.body.appendChild(form);
+        form.submit();
+      }
+    }
+
+    const pokemonButtons = document.querySelectorAll('button.pokebutton');
+  let selectedButton = null;
+
   pokemonButtons.forEach((button) => {
     button.addEventListener('click', (event) => {
       event.preventDefault();
-      selectedPokemonId = button.previousElementSibling.value;
-      button.classList.toggle('colors');
+      const pokemonPos = button.previousElementSibling.value;
+      const pokemonName = button.textContent.trim().toLowerCase();
+
+      if (selectedButton !== null) {
+        selectedButton.classList.remove('colors');
+      }
+
+      if (selectedButton !== button) {
+        selectedButton = button;
+        selectedButton.classList.add('colors');
+        selectedPokemonId = pokemonPos;
+        selectedPokemonName = pokemonName;
+      } else {
+        selectedButton = null;
+        selectedPokemonId = null;
+        selectedPokemonName = null;
+      }
     });
   });
 
-  // Event listener for Remove Pokemon button
-  const removePokemonButton = document.querySelector('#remove-pokemon-button');
-  removePokemonButton.addEventListener('click', (event) => {
-    event.preventDefault();
-    removePokemon();
-  });
+    const removePokemonButton = document.querySelector('#remove-pokemon-button');
+    removePokemonButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      removePokemon();
+    });
+
+    const seeOnePokemonButton = document.querySelector('#see-one-pokemon-button');
+    seeOnePokemonButton.addEventListener('click', (event) => {
+      event.preventDefault();
+      seeOnePokemon();
+    });
 </script>
 
 {% endblock %}
