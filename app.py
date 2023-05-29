@@ -1,4 +1,13 @@
-from flask import Flask, render_template, request, redirect, flash, url_for, session
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    flash,
+    url_for,
+    session,
+    request,
+)
 
 import forms
 import controller
@@ -141,7 +150,7 @@ def random_team():
     teamobject = controller.get_team(userid)
     controller.make_random_team(teamobject)
     set_userdata_session(username)
-    return redirect(url_for("userhome", username=username))
+    return redirect(request.referrer)
 
 
 @app.route("/delete_team", methods=["POST"])
@@ -232,7 +241,7 @@ def all_mons():
     return render_template("all_mons.html", monslist=monslist, form=form)
 
 
-@app.route("/edit_team")
+@app.route("/edit_team", methods=["GET", "POST"])
 def edit_team():
     form = forms.GetMonForm()
     userdata = session.get("userdata")
@@ -244,3 +253,20 @@ def edit_team():
     return render_template(
         "edit_team.html", username=username, teamobject=teamobject, form=form
     )
+
+
+@app.route("/remove_pokemon", methods=["POST"])
+def remove_pokemon():
+    userdata = session.get("userdata")
+    if userdata == None:
+        return redirect(url_for("index"))
+    userid = userdata.get("userid")
+    username = userdata.get("username")
+
+    teamobject = controller.get_team(userid)
+    pokemon_pos = request.form.get("pokemon_pos")
+
+    controller.update_team(teamobject, int(pokemon_pos), "None")
+    set_userdata_session(username)
+
+    return redirect(url_for("edit_team"))
