@@ -7,18 +7,10 @@ body {
   margin: 0;
   padding: 0;
   font-family: "pressstart";
-
+  background-image: url(../bgpurple.png);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: stretch;
-}
-
-.base-background {
-  background-image: url(../bg.png);
-}
-
-.edit-background {
-  background-image: url(../bgpurple.png);
 }
 
 .usercard {

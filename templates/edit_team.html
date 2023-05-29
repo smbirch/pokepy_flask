@@ -1,5 +1,10 @@
-{% extends 'base.html' %} {% block content %}
-
+{% extends 'base.html' %} {% block content %} {% block stylesheet %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{{ url_for('static', filename='css/editteam.css') }}"
+/>
+{% endblock stylesheet %}
 <div
   class="container-fluid d-flex flex-column justify-content-center align-items-center"
   style="height: 100vh"
@@ -146,7 +151,7 @@
                     class="border rounded p-2 pokebutton"
                     id="remove-pokemon-button"
                   >
-                    Remove a Pokemon*
+                    Remove a Pokemon
                   </button>
                 </div>
                 <div class="col-12 mb-3">

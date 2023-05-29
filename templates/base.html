@@ -12,11 +12,13 @@
       crossorigin="anonymous"
     />
 
-    <link href="../static/css/style.css" rel="stylesheet" />
+    {% block stylesheet %}
+    <link rel="stylesheet" type="text/css"  href="{{ url_for('static', filename='css/style.css') }}"/>
+    {% endblock stylesheet %}
     <title>PokePy</title>
   </head>
 
-  <body>
+  <body class="base-background">
     
       <div>
         {% with messages = get_flashed_messages(with_categories=true) %}
