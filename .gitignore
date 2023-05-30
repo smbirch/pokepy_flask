@@ -7,3 +7,5 @@ __pycache__
 !.vscode/extensions.json
 !.vscode/*.code-snippets
 **/.vscode/
+
+logs/*

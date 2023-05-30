@@ -176,8 +176,6 @@ def delete_account(userid):
     userobject = database.User.get_user_session(userid)
     if database.User.delete_account(userobject) == "Error deleting account":
         return "delete_error"
-    else:
-        print(f"\n***{userobject.username}'s account has been deleted***\n")
 
 
 # Passing this function for now to test web API

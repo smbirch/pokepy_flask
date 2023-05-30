@@ -9,11 +9,18 @@ from flask import (
     request,
 )
 
+import logging
+
 import forms
 import controller
 import database
-import main
 
+# logging setup
+logging.basicConfig(
+    filename="logs/logs.log",
+    level=logging.WARNING,
+    format="%(asctime)s - %(name)s - %(levelname)s %(message)s",
+)
 
 app = Flask(__name__)
 
@@ -79,8 +86,8 @@ def index():
 @app.route("/userhome", methods=["GET", "POST"])
 def userhome():
     form = forms.GetMonForm()
-    userdata = session.get("userdata")
 
+    userdata = session.get("userdata")
     if userdata == None:
         return redirect(url_for("index"))
 
@@ -106,7 +113,7 @@ def register():
 
         flash(f"Account created for {form.username.data}!", "success")
         set_userdata_session(username)
-        print(f"\n***{form.username.data} has registered!***\n")
+        app.logger.info(f"{form.username.data} has registered a new account")
 
         return redirect(url_for("userhome", username=username))
 
@@ -129,7 +136,7 @@ def login():
             return redirect(url_for("login"))
 
         set_userdata_session(username)
-        print(f"\n***{form.username.data} has logged in***\n")
+        app.logger.info(f"{form.username.data} has logged in")
         return redirect(url_for("userhome"))
 
     return render_template("login.html", title="Login", form=form)
@@ -137,6 +144,13 @@ def login():
 
 @app.route("/logout")
 def logout():
+    userdata = session.get("userdata")
+    if userdata == None:
+        return redirect(url_for("index"))
+
+    username = userdata.get("username")
+    app.logger.info(f"{username} has logged out")
+
     session.clear()
     return redirect(url_for("index"))
 
@@ -177,6 +191,8 @@ def delete_account():
 
     if request.method == "POST":
         if form.yes.data:
+            app.logger.info(f"{username} has deleted their account")
+
             # Delete the user's account and log them out
             if controller.delete_account(username) == "delete_error":
                 flash(f"There was an error deleting the account")
