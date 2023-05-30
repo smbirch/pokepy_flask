@@ -2,16 +2,14 @@
 
 <div
   class="container-fluid d-flex flex-column justify-content-center align-items-center"
-  style="height: 100vh"
->
-  <a a href="{{url_for('userhome')}}"
-    ><h1
+  style="height: 100vh">
+  <a a href="{{url_for('userhome')}}">
+    <h1
       class="text-left text-muted links controlLinks colors"
       style="position: absolute; top: 0; left: 0; margin: 10px"
     >
       Pokepy
-    </h1></a
-  >
+    </h1></a>
   <a a href="{{url_for('logout')}}"
     ><h6
       class="text-right text-muted links controlLinks colors"
@@ -41,18 +39,34 @@
     </div>
     <div class="d-flex justify-content-center align-items-center">
       <a href="{{ url_for('get_mon')}}" class="btn btn-primary"
-        >Search for another Pokemon!</a
+        >Search for a Pokemon</a
       >
-    </div>
-    <div class="d-flex justify-content-center align-items-center">
-      <a href="{{ request.referrer }}" class="btn btn-primary m-2">Go Back</a>
-
-      <a href="{{ url_for('userhome')}}" class="btn btn-primary m-2">Go Home</a>
       <a href="{{ url_for('all_mons')}}" class="btn btn-primary m-2"
         >See all Pokemon</a
       >
     </div>
-  </div>
+      <form class="d-flex justify-content-center align-items-center" method="POST" action="{{ url_for('add_pokemon') }}">
+        {{ form.hidden_tag() }}
+        <input
+          type="hidden"
+          name="monname"
+          value="{{ mondata.monname }}"
+        />
+        <button
+          type="submit"
+          class="btn btn-primary m-2"
+        >
+          Add to my team
+        </button>
+      </form>
+    </div>
 
-  {% endblock %}
+    <div class="d-flex justify-content-center align-items-center">
+      
+
+      <a href="{{ url_for('userhome')}}" class="btn btn-primary m-2">Go Home</a>
+    </div>
+  </div>
 </div>
+  {% endblock %}
+

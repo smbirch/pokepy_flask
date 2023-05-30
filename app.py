@@ -218,14 +218,15 @@ def get_mon():
 
 @app.route("/mon_info")
 def mon_info():
-    userdata = session.get("userdata")
+    form = forms.GetMonForm()
 
+    userdata = session.get("userdata")
     if userdata == None:
         return redirect(url_for("index"))
 
     mondata = session.get("mondata")
 
-    return render_template("mon_info.html", mondata=mondata)
+    return render_template("mon_info.html", mondata=mondata, form=form)
 
 
 @app.route("/all_mons")
@@ -268,5 +269,33 @@ def remove_pokemon():
 
     controller.update_team(teamobject, int(pokemon_pos), "None")
     set_userdata_session(username)
+
+    return redirect(url_for("edit_team"))
+
+
+@app.route("/add_pokemon", methods=["POST"])
+def add_pokemon():
+    form = forms.GetMonForm()
+    userdata = session.get("userdata")
+    if userdata == None:
+        return redirect(url_for("index"))
+
+    mondata = session.get("mondata")
+    if mondata == None:
+        return redirect(url_for("/edit_team"))
+
+    username = userdata.get("username")
+    userid = userdata.get("userid")
+    monname = mondata.get("monname")
+
+    monobject = controller.get_single_mon(monname)
+    teamobject = controller.get_team(userid)
+    if database.Team.add_mon_to_team(teamobject, monobject) == "428_team_full":
+        flash(f"Your team is already full!")
+        return render_template("mon_info.html", mondata=mondata, form=form)
+
+    set_userdata_session(username)
+
+    print(f"\nadded {monname}\n")
 
     return redirect(url_for("edit_team"))

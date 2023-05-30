@@ -249,7 +249,8 @@ class Team:
         monposition = Team.team_size(self) + 1
         # wraps around if team is already full
         if monposition == 7:
-            monposition = 1
+            return "428_team_full"
+
         nextmonposition = f"mon{monposition}"
 
         with DBConnection() as db:

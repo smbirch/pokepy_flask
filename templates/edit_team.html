@@ -112,21 +112,33 @@
                     </button>
                   </form>
                 </div>
-                <div class="col-12 mb-3">
+                <div class="col-12 mb-3 moreinfo">
                   <input type="hidden" name="monname" value="" />
                   <button
                     type="submit"
                     class="border rounded p-2 userhome-btn"
                     id="see-one-pokemon-button"
+                    title="Select a Pokemon from your team to see more about them"
                   >
-                    See one Pokemon
+                    See more info
                   </button>
                 </div>
                 <div class="col-12 mb-3">
+                  <form method="GET" action="{{ url_for('get_mon') }}">
+                    <button
+                      type="submit"
+                      class="border rounded p-2 userhome-btn"
+                    >
+                      Search for a Pokemon
+                    </button>
+                  </form>
+                </div>
+                <div class="col-12 mb-3 moreinfo">
                   <button
                     type="button"
                     class="border rounded p-2 pokebutton"
                     id="remove-pokemon-button"
+                    title="Select a Pokemon from your team that you want to remove"
                   >
                     Remove a Pokemon
                   </button>
@@ -149,16 +161,6 @@
                       class="border rounded p-2 userhome-btn"
                     >
                       Delete my team
-                    </button>
-                  </form>
-                </div>
-                <div class="col-12 mb-3">
-                  <form method="GET" action="{{ url_for('delete_account') }}">
-                    <button
-                      type="submit"
-                      class="border rounded p-2 userhome-btn"
-                    >
-                      Delete my account
                     </button>
                   </form>
                 </div>
@@ -200,10 +202,8 @@
     }
 
     function seeOnePokemon() {
-      if (selectedPokemonName == "None" || selectedPokemonName == "none") {
-        return
-      }
-      if (selectedPokemonName !== null) {
+
+      if (selectedPokemonName !== null && selectedPokemonName !== "none") {
 
         const form = document.createElement('form');
         form.method = 'POST';
