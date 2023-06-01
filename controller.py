@@ -4,6 +4,7 @@ import sys
 import random
 
 import database
+import app
 
 allmons = []
 
@@ -17,15 +18,14 @@ def get_all_mons():
             )
             response.raise_for_status()
 
-        except requests.exceptions.HTTPError:
-            print("There was an error processing the request...\n")
-            print("restarting")
+        except Exception as err:
+            app.errorlogs.error(f"error getting all_mons: {err}")
+            return "error"
 
         data = response.json()
 
         for item in data["results"]:
             allmons.append(item["name"])
-
     return allmons
 
 
@@ -38,9 +38,8 @@ def get_single_mon(monname):
             response = requests.get(f"https://pokeapi.co/api/v2/pokemon/{monname}/")
             response.raise_for_status()
 
-        except requests.exceptions.HTTPError:
-            print("\nThere was an error processing the request...")
-            print("Please check your spelling and try again.\n")
+        except Exception as err:
+            app.errorlogs.error(f"error getting mon {monname}: {err}")
             return None
 
         # extract data from json and store it in DB
@@ -109,12 +108,9 @@ def get_user(username, password):
     user = database.User.get_user(username, password)
 
     if not user:
-        print("\nUser not found!")
         return "404"
 
     elif user == "401_unauthorized":
-        print("Incorrect password!\nPlease try again")
-        # restart_program()
         return "401"
     else:
         return user
@@ -125,7 +121,6 @@ def get_user_session(username):
     user = database.User.get_user_session(username)
 
     if not user:
-        print("\nUser not found!")
         return "404"
     else:
         return user
@@ -141,9 +136,7 @@ def get_all_users():
 def create_user(username, password):
     userobject = database.User.get_user(username.lower(), password)
     if userobject:
-        print("There is already a user with that username!")
         return "duplicateaccounterror"
-        restart_program()
 
     userobject = database.User.create_user(username, password)
     # Ideally you would never receive None here...
@@ -176,9 +169,3 @@ def delete_account(userid):
     userobject = database.User.get_user_session(userid)
     if database.User.delete_account(userobject) == "Error deleting account":
         return "delete_error"
-
-
-# Passing this function for now to test web API
-def restart_program():
-    # os.execv(sys.executable, ["python"] + sys.argv)
-    pass

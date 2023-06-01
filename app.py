@@ -1,3 +1,4 @@
+import logging
 from flask import (
     Flask,
     render_template,
@@ -8,28 +9,80 @@ from flask import (
     session,
     request,
 )
-
-import logging
+from logging.config import dictConfig
 
 import forms
 import controller
 import database
 
-# logging setup
-logging.basicConfig(
-    filename="logs/logs.log",
-    level=logging.WARNING,
-    format="%(asctime)s - %(name)s - %(levelname)s %(message)s",
+# logging
+dictConfig(
+    {
+        "version": 1,
+        "formatters": {
+            "default": {
+                "format": "[%(asctime)s] %(levelname)s >> %(message)s",
+            }
+        },
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+                "stream": "ext://sys.stdout",
+                "formatter": "default",
+            },
+            "applogger": {
+                "class": "logging.handlers.RotatingFileHandler",
+                "filename": "logs/userlogs.log",
+                "maxBytes": 1000000,
+                "backupCount": 3,
+                "formatter": "default",
+            },
+            "httplogger": {
+                "class": "logging.handlers.RotatingFileHandler",
+                "filename": "logs/httplogs.log",
+                "maxBytes": 1000000,
+                "backupCount": 3,
+                "formatter": "default",
+            },
+            "errorlogger": {
+                "class": "logging.handlers.RotatingFileHandler",
+                "filename": "logs/errorlogs.log",
+                "maxBytes": 1000000,
+                "backupCount": 3,
+                "formatter": "default",
+            },
+        },
+        "root": {"level": "WARNING", "handlers": ["console"]},
+        "loggers": {
+            "userlogs": {
+                "level": "INFO",
+                "handlers": ["applogger"],
+                "propagate": False,
+            },
+            "httplogs": {
+                "level": "INFO",
+                "handlers": ["httplogger"],
+                "propagate": False,
+            },
+            "errorlogs": {
+                "level": "ERROR",
+                "handlers": ["errorlogger"],
+                "propagate": False,
+            },
+        },
+    }
 )
+
+userlogs = logging.getLogger("userlogs")
+httplogs = logging.getLogger("httplogs")
+errorlogs = logging.getLogger("errorlogs")
+
 
 app = Flask(__name__)
 
+
 app.config["SECRET_KEY"] = "temporarysecretkey"
 
-
-print(
-    "\nStrong Pokémon, weak Pokémon, that is only the foolish perception of people. Truly skilled trainers should try to win with their favorites.\n"
-)
 
 database.create_db()
 
@@ -108,12 +161,14 @@ def register():
         userobject = controller.create_user(username, password)
 
         if userobject == "duplicateaccounterror":
-            flash(f"There is already a user with that username!", "success")
+            userlogs.info(f"error: duplicate account: {username}")
+            flash(f"There is already a user with that username!")
             return redirect(url_for("register"))
 
-        flash(f"Account created for {form.username.data}!", "success")
+        flash(f"Account created for {form.username.data}!")
         set_userdata_session(username)
-        app.logger.info(f"{form.username.data} has registered a new account")
+
+        userlogs.info(f"USER:{form.username.data} - EVENT:register")
 
         return redirect(url_for("userhome", username=username))
 
@@ -128,15 +183,19 @@ def login():
         password = form.password.data
         userobject = controller.get_user(username, password)
         if userobject == "404":
+            userlogs.info(f"No account found for {form.username.data} - 404")
             flash(f"No account found for {form.username.data}")
             return redirect(url_for("login"))
 
         elif userobject == "401":
+            userlogs.info(f"Invalid password for USER:{form.username.data} - 401")
             flash(f"Invalid username or password")
             return redirect(url_for("login"))
 
         set_userdata_session(username)
-        app.logger.info(f"{form.username.data} has logged in")
+
+        userlogs.info(f"USER:{form.username.data} - EVENT:login")
+
         return redirect(url_for("userhome"))
 
     return render_template("login.html", title="Login", form=form)
@@ -149,7 +208,7 @@ def logout():
         return redirect(url_for("index"))
 
     username = userdata.get("username")
-    app.logger.info(f"{username} has logged out")
+    userlogs.info(f"USER:{username} - EVENT:logout")
 
     session.clear()
     return redirect(url_for("index"))
@@ -176,6 +235,8 @@ def delete_team():
     teamobject = controller.get_team(userid)
     database.Team.delete_team(teamobject)
     set_userdata_session(username)
+    userlogs.info(f"USER:{username} - EVENT:delete_team")
+
     return redirect(request.referrer)
 
 
@@ -191,7 +252,7 @@ def delete_account():
 
     if request.method == "POST":
         if form.yes.data:
-            app.logger.info(f"{username} has deleted their account")
+            userlogs.info(f"USER:{form.username.data} - EVENT:delete_account")
 
             # Delete the user's account and log them out
             if controller.delete_account(username) == "delete_error":
@@ -220,7 +281,7 @@ def get_mon():
     if form.validate_on_submit():
         monname = form.monname.data
         if monname == "None":
-            print("test")
+            flash("There was a problem with this request. Please try again")
             return redirect(url_for("userhome"))
 
         if set_mondata_session(monname) == "mon_not_found":
@@ -255,6 +316,9 @@ def all_mons():
     form = forms.GetMonForm()
 
     monslist = controller.get_all_mons()
+    if monslist == "error":
+        flash("There was an error getting this list")
+        return redirect(url_for("userhome"))
     return render_template("all_mons.html", monslist=monslist, form=form)
 
 
@@ -312,6 +376,18 @@ def add_pokemon():
 
     set_userdata_session(username)
 
-    print(f"\nadded {monname}\n")
-
     return redirect(url_for("edit_team"))
+
+
+# for logging http requests
+@app.after_request
+def logAfterRequest(response):
+    httplogs.info(
+        "path: %s | method: %s | status: %s | size: %s",
+        request.path,
+        request.method,
+        response.status,
+        response.content_length,
+    )
+
+    return response

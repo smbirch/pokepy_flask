@@ -6,6 +6,8 @@ import uuid
 
 import bcrypt
 
+import app
+
 database_file = "data/pokepy.db"
 
 
@@ -143,8 +145,8 @@ class User:
                 db.execute_query(queryone, self.userid)
                 or db.execute_query(querytwo, self.userid) == "db_query_execution_error"
             ):
-                print("\nrolling back...\n")
                 db.rollback()
+                app.errorlogs.error(f"DB_ERR - error deleting account>>rolling back")
                 return "Error deleting account"
             else:
                 return
