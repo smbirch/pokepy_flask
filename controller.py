@@ -19,7 +19,7 @@ def get_all_mons():
             response.raise_for_status()
 
         except Exception as err:
-            app.errorlogs.error(f"error getting all_mons: {err}")
+            app.errorlogs.error(f"all_mons: {err}")
             return "error"
 
         data = response.json()
@@ -39,7 +39,7 @@ def get_single_mon(monname):
             response.raise_for_status()
 
         except Exception as err:
-            app.errorlogs.error(f"error getting mon {monname}: {err}")
+            app.errorlogs.error(f"get_single_mon {monname}: {err}")
             return None
 
         # extract data from json and store it in DB
@@ -70,9 +70,8 @@ def get_team(userid):
 
 def make_random_team(teamobject):
     database.Team.delete_team(teamobject)
-    global allmons
-    if len(allmons) == 0:
-        allmons = get_all_mons()
+
+    allmons = get_all_mons()
 
     shuffled_mons = []
     for mon in allmons:
@@ -141,7 +140,6 @@ def create_user(username, password):
     userobject = database.User.create_user(username, password)
     # Ideally you would never receive None here...
     if userobject == None:
-        print("This username is already taken!\n")
         return "duplicateaccounterror"
 
     database.Team.create_team(userobject.userid)

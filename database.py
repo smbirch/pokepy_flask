@@ -25,8 +25,7 @@ class DBConnection:
                 self.cursor.execute(query, args)
 
             except Error as e:
-                print("Error executing db query")
-                print(e)
+                app.errorlogs(f"DB: execute_query >> {e}")
                 return "db_query_execution_error"
 
     def commit(self):
@@ -38,7 +37,7 @@ class DBConnection:
 
     def rollback(self):
         self.conn.rollback()
-        print("db rollback")
+        app.errorlogs.error("DB - Rollback")
 
     def close(self):
         if self.conn:
@@ -67,7 +66,9 @@ class User:
     def get_user(username, password):
         with DBConnection() as db:
             query = "SELECT * FROM users WHERE username = ?;"
-            db.execute_query(query, username)
+            if db.execute_query(query, username) == "db_query_execution_error":
+                app.errorlogs("DB - get_user failed")
+
             userobject = None
 
             for row in db.cursor:
@@ -89,7 +90,8 @@ class User:
     def get_user_session(username):
         with DBConnection() as db:
             query = "SELECT * FROM users WHERE username = ?;"
-            db.execute_query(query, username)
+            if db.execute_query(query, username) == "db_query_execution_error":
+                app.errorlogs("DB - get_user failed")
             userobject = None
 
             for row in db.cursor:
@@ -104,7 +106,8 @@ class User:
         users = []
         with DBConnection() as db:
             query = "SELECT * FROM users;"
-            db.execute_query(query)
+            if db.execute_query(query) == "db_query_execution_error":
+                app.errorlogs("DB - get_all_users failed")
 
             for row in db.cursor:
                 users.append(row[1])
@@ -130,7 +133,8 @@ class User:
                 db.execute_query(create_user_sql, *userdata)
                 == "db_query_execution_error"
             ):
-                print("ERROR creating user")
+                db.rollback()
+                app.errorlogs("DB create_user failed")
                 return None
             else:
                 userobject = User(userid, username.lower(), password, date_created)
@@ -146,7 +150,9 @@ class User:
                 or db.execute_query(querytwo, self.userid) == "db_query_execution_error"
             ):
                 db.rollback()
-                app.errorlogs.error(f"DB_ERR - error deleting account>>rolling back")
+                app.errorlogs.error(
+                    f"DB delete_account failed for user:{self.username}"
+                )
                 return "Error deleting account"
             else:
                 return
@@ -180,7 +186,11 @@ class Pokemon:
                 self.montype,
                 self.sprite,
             )
-            db.execute_query(insert_with_params, *mondata)
+            if (
+                db.execute_query(insert_with_params, *mondata)
+                == "db_query_execution_error"
+            ):
+                app.errorlogs(f"DB - add_mon_todb failed for {self.name}")
 
     # This should return either the pokemon object from DB, or None
     @staticmethod
@@ -228,7 +238,8 @@ class Team:
                 query = "UPDATE teams SET {0}='None' WHERE teamid='{1}';".format(
                     mon, teamid
                 )
-                db.execute_query(query)
+                if db.execute_query(query) == "db_query_execution_error":
+                    app.errorlogs(f"DB - delete_team failed teamID: {self.teamid}")
         # Updating current object with new empty team
         for attr, _ in self.__dict__.items():
             if attr == "teamid":
@@ -275,7 +286,8 @@ class Team:
             query = "UPDATE teams SET {0}='{1}' WHERE teamid='{2}';".format(
                 column_pos, newstring, self.teamid
             )
-            db.execute_query(query)
+            if db.execute_query(query) == "db_query_execution_error":
+                app.errorlogs(f"")
 
     @staticmethod
     def get_team(teamid):
