@@ -20,7 +20,6 @@ class FlaskAppTestCase(unittest.TestCase):
         response = self.app.get("/register")
         self.assertEqual(response.status_code, 200)
 
-    # Add more test cases for other routes
     def test_valid_login(self):
         with self.app as client:
             response = client.post(
@@ -42,14 +41,6 @@ def test_logout(self):
         self.assertEqual(response.request.path, url_for("index"))
         self.assertNotIn(b"test_user", session.get("userdata", {}))
         self.assertIn(b"USER:test_user - EVENT:logout", response.data)
-
-
-def test_logout_without_userdata(self):
-    with self.app as client:
-        response = client.get("/logout", follow_redirects=True)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.request.path, url_for("index"))
 
 
 if __name__ == "__main__":
