@@ -12,6 +12,8 @@ database_file = "data/pokepy.db"
 
 
 class DBConnection:
+    """Helper class for working with the database connection."""
+
     def __init__(self):
         self.conn = sqlite3.connect(database_file)
         self.cursor = self.conn.cursor()
@@ -32,8 +34,7 @@ class DBConnection:
         try:
             self.conn.commit()
         except Error as e:
-            print("db commit error")
-            print(e)
+            app.errorlogs(f"DB: commit error >> {e}")
 
     def rollback(self):
         self.conn.rollback()
@@ -53,6 +54,8 @@ class DBConnection:
 
 
 class User:
+    """Represents a user."""
+
     def __init__(self, userid, username, password, date_created):
         self.userid = userid
         self.username = username
@@ -64,6 +67,16 @@ class User:
 
     @staticmethod
     def get_user(username, password):
+        """Gets a user from the database.
+
+        Args:
+            username (string)
+            password (string): Plaintext user password.
+
+        Returns:
+            class: An instance of User.
+        """
+
         with DBConnection() as db:
             query = "SELECT * FROM users WHERE username = ?;"
             if db.execute_query(query, username) == "db_query_execution_error":
@@ -88,6 +101,15 @@ class User:
     # This method is used to pull users who are already authenticated
     @staticmethod
     def get_user_session(username):
+        """Gets a user who is already authenticated.
+
+        Args:
+            username (string)
+
+        Returns:
+            class: An instance of User.
+        """
+
         with DBConnection() as db:
             query = "SELECT * FROM users WHERE username = ?;"
             if db.execute_query(query, username) == "db_query_execution_error":
@@ -103,6 +125,12 @@ class User:
 
     @staticmethod
     def get_all_users():
+        """Gets a list of all users
+
+        Returns:
+            list
+        """
+
         users = []
         with DBConnection() as db:
             query = "SELECT * FROM users;"
@@ -117,6 +145,16 @@ class User:
 
     @staticmethod
     def create_user(username, password):
+        """Creates a new user and inserts into database.
+
+        Args:
+            username (string)
+            password (string): Plaintext user password.
+
+        Returns:
+            class: An instance of User.
+        """
+
         with DBConnection() as db:
             userid = uuid.uuid4().hex
             now = datetime.datetime.now()
