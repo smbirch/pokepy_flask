@@ -10,6 +10,12 @@ allmons = []
 
 
 def get_all_mons():
+    """Gets a list of the names of each mon.
+
+    Returns:
+        list: list of strings containing mon names.
+    """
+
     global allmons
     if len(allmons) == 0:
         try:
@@ -30,12 +36,21 @@ def get_all_mons():
 
 
 def get_single_mon(monname):
-    monname = monname.lower()
+    """Get a single mon from API or DB.
+
+    Args:
+        monname (string): string of a mon name
+
+    Returns:
+        class object: instance of the Pokemon class. See database.py.
+    """
 
     dbmon = database.Pokemon.get_mon(monname)
     if not dbmon:
         try:
-            response = requests.get(f"https://pokeapi.co/api/v2/pokemon/{monname}/")
+            response = requests.get(
+                f"https://pokeapi.co/api/v2/pokemon/{monname.lower()}/"
+            )
             response.raise_for_status()
 
         except Exception as err:
@@ -64,11 +79,29 @@ def get_single_mon(monname):
 
 
 def get_team(userid):
+    """Gets an class instance of a user's team.
+
+    Args:
+        userid (string): Hex string generated when the user object was created.
+
+    Returns:
+        class: Returns a class instance of a user's team.
+    """
+
     teamobject = database.Team.get_team(userid)
     return teamobject
 
 
 def make_random_team(teamobject):
+    """Generate a random team of mons for a user.
+
+    Args:
+        teamobject (class): An instance of the Team class.
+
+    Returns:
+        class: An instance of the Team class.
+    """
+
     database.Team.delete_team(teamobject)
 
     allmons = get_all_mons()
@@ -104,6 +137,16 @@ def update_team(teamobject, position, newmon):
 
 
 def get_user(username, password):
+    """Gets a user from database.
+
+    Args:
+        username (string): String of a user's username.
+        password (string): A user's plaintext passwor, usually given at login.
+
+    Returns:
+        class: An instance of the User class.
+    """
+
     user = database.User.get_user(username, password)
 
     if not user:
@@ -117,6 +160,15 @@ def get_user(username, password):
 
 # This method is used to pull users who are already authenticated
 def get_user_session(username):
+    """Gets users who are already authenticated.
+
+    Args:
+        username (string)
+
+    Returns:
+        class: An instance of the User class.
+    """
+
     user = database.User.get_user_session(username)
 
     if not user:
@@ -126,6 +178,12 @@ def get_user_session(username):
 
 
 def get_all_users():
+    """Gets a list of all users.
+
+    Returns:
+        list: A list of strings containing usernames.
+    """
+
     userslist = database.User.get_all_users()
     if not userslist:
         return None
@@ -133,6 +191,16 @@ def get_all_users():
 
 
 def create_user(username, password):
+    """Creates a new user.
+
+    Args:
+        username (string): A username string given during registration.
+        password (string): A user's plaintext password given during registration.
+
+    Returns:
+        class: An instance of the User class.
+    """
+
     userobject = database.User.get_user(username.lower(), password)
     if userobject:
         return "duplicateaccounterror"
@@ -163,7 +231,15 @@ def learn_more():
     print()
 
 
-def delete_account(userid):
-    userobject = database.User.get_user_session(userid)
+def delete_account(username):
+    """Delete a user account.
+
+    Args:
+        username (string): a username, which should always be unique.
+
+    Returns:
+        None
+    """
+    userobject = database.User.get_user_session(username)
     if database.User.delete_account(userobject) == "Error deleting account":
         return "delete_error"

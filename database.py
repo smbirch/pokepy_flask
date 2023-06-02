@@ -239,7 +239,10 @@ class Team:
                     mon, teamid
                 )
                 if db.execute_query(query) == "db_query_execution_error":
+                    db.rollback()
                     app.errorlogs(f"DB - delete_team failed teamID: {self.teamid}")
+                    return "500"
+
         # Updating current object with new empty team
         for attr, _ in self.__dict__.items():
             if attr == "teamid":
@@ -293,7 +296,12 @@ class Team:
     def get_team(teamid):
         # get team by searching for userID
         with DBConnection() as db:
-            db.execute_query("SELECT * FROM teams WHERE teamid = ?;", teamid)
+            if (
+                db.execute_query("SELECT * FROM teams WHERE teamid = ?;", teamid)
+                == "db_query_execution_error"
+            ):
+                app.errorlogs(f">>get_team")
+                return "500"
             if db.cursor == None:
                 return Team.create_team(teamid)
             else:

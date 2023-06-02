@@ -52,7 +52,7 @@ dictConfig(
                 "formatter": "default",
             },
         },
-        "root": {"level": "WARNING", "handlers": ["console"]},
+        # "root": {"level": "WARNING", "handlers": ["console"]},
         "loggers": {
             "userlogs": {
                 "level": "INFO",
@@ -77,12 +77,9 @@ userlogs = logging.getLogger("userlogs")
 httplogs = logging.getLogger("httplogs")
 errorlogs = logging.getLogger("errorlogs")
 
-
 app = Flask(__name__)
 
-
 app.config["SECRET_KEY"] = "temporarysecretkey"
-
 
 database.create_db()
 
@@ -214,18 +211,6 @@ def logout():
     return redirect(url_for("index"))
 
 
-@app.route("/random_team", methods=["POST"])
-def random_team():
-    userdata = session.get("userdata")
-    username = userdata.get("username")
-    userid = userdata.get("userid")
-
-    teamobject = controller.get_team(userid)
-    controller.make_random_team(teamobject)
-    set_userdata_session(username)
-    return redirect(request.referrer)
-
-
 @app.route("/delete_team", methods=["POST"])
 def delete_team():
     userdata = session.get("userdata")
@@ -233,7 +218,14 @@ def delete_team():
     userid = userdata.get("userid")
 
     teamobject = controller.get_team(userid)
-    database.Team.delete_team(teamobject)
+    if teamobject == "500":
+        flash("Error deleting team")
+        return redirect(url_for("userhome"))
+
+    if database.Team.delete_team(teamobject) == "500":
+        flash("Error deleting team")
+        return redirect(url_for("userhome"))
+
     set_userdata_session(username)
     userlogs.info(f"USER:{username} - EVENT:delete_team")
 
@@ -293,19 +285,6 @@ def get_mon():
     return render_template("get_mon.html", form=form)
 
 
-@app.route("/mon_info")
-def mon_info():
-    form = forms.GetMonForm()
-
-    userdata = session.get("userdata")
-    if userdata == None:
-        return redirect(url_for("index"))
-
-    mondata = session.get("mondata")
-
-    return render_template("mon_info.html", mondata=mondata, form=form)
-
-
 @app.route("/all_mons")
 def all_mons():
     userdata = session.get("userdata")
@@ -322,6 +301,33 @@ def all_mons():
     return render_template("all_mons.html", monslist=monslist, form=form)
 
 
+@app.route("/mon_info")
+def mon_info():
+    form = forms.GetMonForm()
+
+    userdata = session.get("userdata")
+    if userdata == None:
+        return redirect(url_for("index"))
+
+    mondata = session.get("mondata")
+
+    return render_template("mon_info.html", mondata=mondata, form=form)
+
+
+@app.route("/random_team", methods=["POST"])
+def random_team():
+    userdata = session.get("userdata")
+    username = userdata.get("username")
+    userid = userdata.get("userid")
+
+    teamobject = controller.get_team(userid)
+    controller.make_random_team(teamobject)
+    set_userdata_session(username)
+
+    userlogs.info(f"USER:{username} - EVENT:random_team")
+    return redirect(request.referrer)
+
+
 @app.route("/edit_team", methods=["GET", "POST"])
 def edit_team():
     form = forms.GetMonForm()
@@ -334,23 +340,6 @@ def edit_team():
     return render_template(
         "edit_team.html", username=username, teamobject=teamobject, form=form
     )
-
-
-@app.route("/remove_pokemon", methods=["POST"])
-def remove_pokemon():
-    userdata = session.get("userdata")
-    if userdata == None:
-        return redirect(url_for("index"))
-    userid = userdata.get("userid")
-    username = userdata.get("username")
-
-    teamobject = controller.get_team(userid)
-    pokemon_pos = request.form.get("pokemon_pos")
-
-    controller.update_team(teamobject, int(pokemon_pos), "None")
-    set_userdata_session(username)
-
-    return redirect(url_for("edit_team"))
 
 
 @app.route("/add_pokemon", methods=["POST"])
@@ -374,6 +363,23 @@ def add_pokemon():
         flash(f"Your team is already full!")
         return render_template("mon_info.html", mondata=mondata, form=form)
 
+    set_userdata_session(username)
+
+    return redirect(url_for("edit_team"))
+
+
+@app.route("/remove_pokemon", methods=["POST"])
+def remove_pokemon():
+    userdata = session.get("userdata")
+    if userdata == None:
+        return redirect(url_for("index"))
+    userid = userdata.get("userid")
+    username = userdata.get("username")
+
+    teamobject = controller.get_team(userid)
+    pokemon_pos = request.form.get("pokemon_pos")
+
+    controller.update_team(teamobject, int(pokemon_pos), "None")
     set_userdata_session(username)
 
     return redirect(url_for("edit_team"))
