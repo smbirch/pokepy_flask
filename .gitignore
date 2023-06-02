@@ -8,4 +8,4 @@ __pycache__
 !.vscode/*.code-snippets
 **/.vscode/
 
-logs/*
+*.log
