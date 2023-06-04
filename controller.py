@@ -1,3 +1,4 @@
+import asyncio
 import requests
 import time
 import sys
@@ -45,12 +46,12 @@ def get_single_mon(monname):
         class object: instance of the Pokemon class. See database.py.
     """
 
+    url = f"https://pokeapi.co/api/v2/pokemon/{monname.lower()}/"
+
     dbmon = database.Pokemon.get_mon(monname)
     if not dbmon:
         try:
-            response = requests.get(
-                f"https://pokeapi.co/api/v2/pokemon/{monname.lower()}/"
-            )
+            response = requests.get(url)
             response.raise_for_status()
 
         except Exception as err:
