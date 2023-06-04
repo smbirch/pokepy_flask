@@ -1,11 +1,13 @@
-import asyncio
+import logging
 import requests
 import time
 import sys
 import random
 
 import database
-import app
+
+errorlogs = logging.getLogger("errorlogs")
+
 
 allmons = []
 
@@ -26,7 +28,7 @@ def get_all_mons():
             response.raise_for_status()
 
         except Exception as err:
-            app.errorlogs.error(f"all_mons: {err}")
+            errorlogs.error(f"all_mons: {err}")
             return "error"
 
         data = response.json()
@@ -55,7 +57,7 @@ def get_single_mon(monname):
             response.raise_for_status()
 
         except Exception as err:
-            app.errorlogs.error(f"get_single_mon {monname}: {err}")
+            errorlogs.error(f"get_single_mon {monname}: {err}")
             return None
 
         # extract data from json and store it in DB

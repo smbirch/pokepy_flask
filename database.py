@@ -3,10 +3,10 @@ from sqlite3 import Error
 import os
 import datetime
 import uuid
-
+import logging
 import bcrypt
 
-import app
+errorlogs = logging.getLogger("errorlogs")
 
 database_file = "data/pokepy.db"
 
@@ -27,18 +27,18 @@ class DBConnection:
                 self.cursor.execute(query, args)
 
             except Error as e:
-                app.errorlogs(f"DB: execute_query >> {e}")
+                errorlogs.error(f"DB: execute_query >> {e}")
                 return "db_query_execution_error"
 
     def commit(self):
         try:
             self.conn.commit()
         except Error as e:
-            app.errorlogs(f"DB: commit error >> {e}")
+            errorlogs.error(f"DB: commit error >> {e}")
 
     def rollback(self):
         self.conn.rollback()
-        app.errorlogs.error("DB - Rollback")
+        errorlogs.error.error("DB - Rollback")
 
     def close(self):
         if self.conn:
@@ -80,7 +80,7 @@ class User:
         with DBConnection() as db:
             query = "SELECT * FROM users WHERE username = ?;"
             if db.execute_query(query, username) == "db_query_execution_error":
-                app.errorlogs("DB - get_user failed")
+                errorlogs.error("DB - get_user failed")
 
             userobject = None
 
@@ -113,7 +113,7 @@ class User:
         with DBConnection() as db:
             query = "SELECT * FROM users WHERE username = ?;"
             if db.execute_query(query, username) == "db_query_execution_error":
-                app.errorlogs("DB - get_user failed")
+                errorlogs.error("DB - get_user failed")
             userobject = None
 
             for row in db.cursor:
@@ -135,7 +135,7 @@ class User:
         with DBConnection() as db:
             query = "SELECT * FROM users;"
             if db.execute_query(query) == "db_query_execution_error":
-                app.errorlogs("DB - get_all_users failed")
+                errorlogs.error("DB - get_all_users failed")
 
             for row in db.cursor:
                 users.append(row[1])
@@ -172,7 +172,7 @@ class User:
                 == "db_query_execution_error"
             ):
                 db.rollback()
-                app.errorlogs("DB create_user failed")
+                errorlogs.error("DB create_user failed")
                 return None
             else:
                 userobject = User(userid, username.lower(), password, date_created)
@@ -188,7 +188,7 @@ class User:
                 or db.execute_query(querytwo, self.userid) == "db_query_execution_error"
             ):
                 db.rollback()
-                app.errorlogs.error(
+                errorlogs.error.error(
                     f"DB delete_account failed for user:{self.username}"
                 )
                 return "Error deleting account"
@@ -228,7 +228,7 @@ class Pokemon:
                 db.execute_query(insert_with_params, *mondata)
                 == "db_query_execution_error"
             ):
-                app.errorlogs(f"DB - add_mon_todb failed for {self.name}")
+                errorlogs.error(f"DB - add_mon_todb failed for {self.name}")
 
     # This should return either the pokemon object from DB, or None
     @staticmethod
@@ -278,7 +278,7 @@ class Team:
                 )
                 if db.execute_query(query) == "db_query_execution_error":
                     db.rollback()
-                    app.errorlogs(f"DB - delete_team failed teamID: {self.teamid}")
+                    errorlogs.error(f"DB - delete_team failed teamID: {self.teamid}")
                     return "500"
 
         # Updating current object with new empty team
@@ -328,7 +328,7 @@ class Team:
                 column_pos, newstring, self.teamid
             )
             if db.execute_query(query) == "db_query_execution_error":
-                app.errorlogs(f"")
+                errorlogs.error(f"")
 
     @staticmethod
     def get_team(teamid):
@@ -338,7 +338,7 @@ class Team:
                 db.execute_query("SELECT * FROM teams WHERE teamid = ?;", teamid)
                 == "db_query_execution_error"
             ):
-                app.errorlogs(f">>get_team")
+                errorlogs.error(f">>get_team")
                 return "500"
             if db.cursor == None:
                 return Team.create_team(teamid)
