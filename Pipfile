@@ -9,7 +9,6 @@ questionary = "*"
 bcrypt = "*"
 flask = "*"
 flask-wtf = "*"
-gunicorn = "*"
 
 [dev-packages]
 black = "*"
